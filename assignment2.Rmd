@@ -10,7 +10,6 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 Sys.setlocale("LC_ALL", "English")
 library(maxLik)
-
 load("dataex2.Rdata")
 load("dataex4.Rdata")
 load("dataex5.Rdata")
