@@ -39,6 +39,16 @@ Show that the maximum likelihood estimator based on the observed data $\{(x_i,r_
 $$\hat{\theta} = \frac{\sum_{i=1}^n X_i^2}{2\sum_{i=1}^nR_i}.$$
 
 ### **Answer** : 
+We first define the Survival function (from **Workshop 3**)as 
+$$S(y)=\mathbb{P}(Y_i>C;\theta)=1-F(y_i;\theta)$$
+which also represents the censored observations. For the uncensored observation, we have
+$$f(y_i;\theta)=\frac{d}{dy_i}F(y_i;\theta)$$
+Given that $Y_1,\dots,Y_n$ are independent and identically 
+\begin{equation*}
+  \begin{split}
+    x=x
+  \end{split}
+\end{equation*}
 
 ## b)
 Show that the expected Fisher Information for the observed data likelihood is $$I(\theta) = \frac{n}{\theta^2}(1 - e^{-C^2/(2\theta})$$
