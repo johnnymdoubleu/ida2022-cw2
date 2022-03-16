@@ -333,8 +333,8 @@ summary(mle)</code></pre>
 <p><span class="math inline">\(\text{logit}\{\mathbb{P}(R=0|y_1,y_2,\theta,\psi)\}=\psi_0+\psi_1y_1, \quad \psi= (\psi_0,\psi_1)\)</span> distinct from <span class="math inline">\(\theta\)</span>.</p>
 <div id="answer-5" class="section level3">
 <h3><strong>Answer</strong> :</h3>
-<p>Referring to the ignorability assumption (from <strong>Lecture 6.1</strong>), the missing in <span class="math inline">\(Y_2\)</span> is either <strong>MAR</strong> or <strong>MCAR</strong> and its model parameters, <span class="math inline">\(\theta = (\mu_1, \mu_2, \sigma_1^2, \sigma_{12}, \sigma_2^2)\)</span> and missing mechanism parameter, <span class="math inline">\(\phi\)</span>.</p>
-<p>First, the missing mechanism is <strong>MAR</strong>. This is because the missingness is only dependent on <span class="math inline">\(Y_1\)</span> which is a fully observed variable. The parameters, <span class="math inline">\(\{\theta,\phi\}\)</span> are also distinct. Therefore, the ignorability assumption holds here and (a) is ignorable for likelihood-based estimation.</p>
+<p>Referring to the ignorability assumption (from <strong>Lecture 6.1</strong>), the missing in <span class="math inline">\(Y_2\)</span> is either <strong>MAR</strong> or <strong>MCAR</strong> and its model parameters, <span class="math inline">\(\theta = (\mu_1, \mu_2, \sigma_1^2, \sigma_{12}, \sigma_2^2)\)</span> and missing mechanism parameter, <span class="math inline">\(\psi\)</span>.</p>
+<p>First, the missing mechanism is <strong>MAR</strong>. This is because the missingness is only dependent on <span class="math inline">\(Y_1\)</span> which is a fully observed variable. The parameters, <span class="math inline">\(\{\theta,\psi\}\)</span> are also distinct. Therefore, the ignorability assumption holds here and (a) is ignorable for likelihood-based estimation.</p>
 </div>
 </div>
 <div id="b-2" class="section level2">
@@ -342,7 +342,7 @@ summary(mle)</code></pre>
 <p><span class="math inline">\(\text{logit}\{\mathbb{P}(R=0|y_1,y_2,\theta,\psi)\}=\psi_0+\psi_1y_2, \quad \psi= (\psi_0,\psi_1)\)</span> distinct from <span class="math inline">\(\theta\)</span>.</p>
 <div id="answer-6" class="section level3">
 <h3><strong>Answer</strong> :</h3>
-<p>The missing mechanism is <strong>MNAR</strong>. Referring to the ignorability assumption (from <strong>Lecture 6.1</strong>)</p>
+<p>The missing mechanism is <strong>MNAR</strong> as the mechanism is only dependent on <span class="math inline">\(Y_2\)</span>. Therefore, the missing value is depending on itself and possibly other factors. Therefore, by referring to the ignorability assumption (from <strong>Lecture 6.1</strong>), we conclude that (b) is not ignorable for likelihood-based estimation.</p>
 </div>
 <div id="c-1" class="section level3">
 <h3>c)</h3>
@@ -350,6 +350,7 @@ summary(mle)</code></pre>
 </div>
 <div id="answer-7" class="section level3">
 <h3><strong>Answer</strong> :</h3>
+<p>The missing mechanism here is dependent on both <span class="math inline">\(\mu_1\)</span> and <span class="math inline">\(Y_1\)</span>. We can observe similarity to (a). Distinctness of the parameters means that the parameter space of <span class="math inline">\((\theta, \psi)\)</span> is equal to the Cartesian product of their individual product spaces. However, the <span class="math inline">\(\mu_1\)</span> also exists in the parameter space. This violates the ignorability assumption. Hence, (c) is not ignorable for likelihood-based estimation</p>
 <div style="page-break-after: always;"></div>
 </div>
 </div>
