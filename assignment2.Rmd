@@ -265,13 +265,13 @@ scalar $\psi$ distinct from $\theta$.
 
 ### **Answer** :
 
-The missing mechanism here is dependent on both $\mu_1$ and $Y_1$. We can observe similarity to (a). Distinctness of the parameters means that the parameter space of $(\theta, \psi)$ is equal to the Cartesian product of their individual product spaces. However, the $\mu_1$ also exists in the parameter space. This violates the ignorability assumption. Hence, (c) is not ignorable for likelihood-based estimation
+The missing mechanism here is dependent on both $\mu_1$ and $Y_1$. We can observe similarity to (a). Distinctness of the parameters means that the parameter space of $(\theta, \psi)$ is equal to the Cartesian product of their individual product spaces. However, the $\mu_1$ also exists in the parameter space. This violates the ignorability assumption. Hence, (c) is not ignorable for likelihood-based estimation.
 
 \newpage
 
 # Q4.
 
-$$Y_i\overset{\text{ind.}}{\sim} \text{Bernoulli}(p_i(\boldsymbol{\beta})$$
+$$Y_i\overset{\text{ind.}}{\sim} \text{Bernoulli}(p_i(\boldsymbol{\beta}))$$
 
 $$p_i(\boldsymbol{\beta}) = \frac{exp(\beta_0 + x_i\beta_1)}{1 + exp(\beta_0 + x_i\beta_1)},$$
 for $i=1,\cdots,n$ and $\boldsymbol{\beta} = (\beta_0, \beta_1)'$.
@@ -283,11 +283,19 @@ loss of generality because we have a univariate pattern of missingness,
 when writing down your expressions, you can assume that the first $m$
 values of $Y$ are observed and the remaining $n-m$ are missing. $2$) You
 can use a built in function such as `optim` or the `maxLik` package for
-the M-step
+the M-step.
 
 ### **Answer** :
 
+We first derive the likelihood function.
 
+\begin{equation}
+  \begin{split}
+    L(\beta_0, \beta_1|\boldsymbol{x,y}) &= \prod^{n}_{i=1} \bigg([p_i(\beta_0,\beta_1)]^{y_i}[1-p(\beta_0,\beta_1)]^{1-y_i}\bigg)\\
+    \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y}) &= \prod^{n}_{i=1}\bigg( \frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg)^{y_i} \bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg)^{1-y_i} \\
+    \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y}) &= 
+  \end{split}
+\end{equation}
 
 \newpage
 
@@ -318,4 +326,5 @@ the MLEs for each component of $\theta$. As starting values, you might
 want to consider
 $\theta^{(0)} = (p^{(0)}, \mu^{0)}, (\sigma^{(0)})^2, \lambda^{(0)}) = (0.1, 1, 0.5^2, 2)$.
 Draw the histogram of the data with the estimated density superimposed.
+
 ##\# **Answer** :
