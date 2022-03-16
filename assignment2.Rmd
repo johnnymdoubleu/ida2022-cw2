@@ -4,9 +4,6 @@ author: "Johnny Lee, s1687781"
 output:
   pdf_document: default
   html_document: default
-editor_options: 
-  markdown: 
-    wrap: 72
 ---
 
 ```{r setup, include=FALSE}
@@ -103,8 +100,8 @@ Then, the Fisher Information for the observed data likelihood is,
 \begin{equation}\label{eq:fi}
   \begin{split}
     I(\theta)&=-\mathbb{E}\bigg(\frac{\sum^{n}_{i=1}r_i}{\theta^2}-\frac{x^2_i}{\theta^3}\bigg)\\
-    &=\frac{n\mathbb{E}(R)}{\theta^2}+\frac{n\mathbb{E}(X^2)}{\theta^3}\\
-    &=\frac{n\mathbb{E}(R)}{\theta^2}+\frac{1}{\theta^3}\bigg(n\mathbb{E}(RY^2)+nC^2\mathbb{E}(1-R)\bigg)
+    &=-\frac{n\mathbb{E}(R)}{\theta^2}+\frac{n\mathbb{E}(X^2)}{\theta^3}\\
+    &=-\frac{n\mathbb{E}(R)}{\theta^2}+\frac{1}{\theta^3}\bigg(n\mathbb{E}(RY^2)+nC^2\mathbb{E}(1-R)\bigg)
   \end{split}
 \end{equation}
 
@@ -193,11 +190,13 @@ Given that $X_1,\dots,X_n$ are independent and identically distributed,
 we have the likelihood function as,
 
 
-\begin{align*}
-l(\mu, \sigma^2|\boldsymbol{x}, \boldsymbol{r})&=\log \prod_{i=1}^{n}\left\{\phi(x_i;\mu,\sigma^2)]^{r_i}[\Phi(x_i;\mu, \sigma^2)]^{1-r_i}\right\}\\
-&= \log \left\{\phi(x_i;\mu,\sigma^2)]^{\sum_i r_i}[\Phi(x_i;\mu, \sigma^2)]^{\sum_i(1-r_i)}\right\}\\
-&=  \sum_{i=1}^n\left\{r_i\log\phi(x_i; \mu, \sigma^2) + (1-r_i)\log\Phi(x_i;\mu, \sigma^2)\right\}
-\end{align*}
+\begin{equation}
+\begin{split}
+  l(\mu, \sigma^2|\boldsymbol{x}, \boldsymbol{r})&=\log \prod_{i=1}^{n}\left\{\phi(x_i;\mu,\sigma^2)]^{r_i}[\Phi(x_i;\mu, \sigma^2)]^{1-r_i}\right\}\\
+  &= \log \left\{\phi(x_i;\mu,\sigma^2)]^{\sum_i r_i}[\Phi(x_i;\mu, \sigma^2)]^{\sum_i(1-r_i)}\right\}\\
+  &=  \sum_{i=1}^n\left\{r_i\log\phi(x_i; \mu, \sigma^2) + (1-r_i)\log\Phi(x_i;\mu, \sigma^2)\right\}
+\end{split}
+\end{equation}
 
 \newpage
 
