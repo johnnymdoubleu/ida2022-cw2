@@ -52,7 +52,7 @@ Given that $Y_1,\dots,Y_n$ are independent and identically distributed,
 we have the likelihood function as,
 \begin{equation}\label{eq:likelihood}
   \begin{split}
-    L(\theta)&= \prod^{n}_{i=1} \bigg( [f(y_i;\theta)]^{r_i} [S(C;\theta)]^{1-r_i}\bigg)\\
+    L(\theta|\boldsymbol{y,r})&= \prod^{n}_{i=1} \bigg( [f(y_i;\theta)]^{r_i} [S(C;\theta)]^{1-r_i}\bigg)\\
     &= \prod^{n}_{i=1} \bigg( [\frac{ye^{-y^2/2\theta}}{\theta}]^{r_i} [e^{-C^2/\theta}]^{1-r_i}\bigg)\\
     &= \bigg( \frac{y_i}{2\theta}\bigg)^{\sum^{n}_{i=1}r_i}\exp\bigg(\frac{\sum^{n}_{i=1}(r_i y^2_i +(1-r_i)C^2)}{2\theta}\bigg)
   \end{split}
@@ -71,9 +71,9 @@ binary, we can then conclude with the expression as
 Now we substitute (\ref{eq:x}) into (\ref{eq:likelihood}) to have,
 \begin{equation}\label{eq:loglik}
   \begin{split}
-    L(\theta)&= \bigg( \frac{y_i}{2\theta}\bigg)^{\sum^{n}_{i=1}r_i}\exp\bigg(\frac{\sum^{n}_{i=1}x_i}{2\theta}\bigg)\\
-    \implies \log(L(\theta))&=-\log\theta\sum^{n}_{i=1}r_i-\frac{\sum^{n}_{i=1}x_i^2}{2\theta}\\
-    \implies \frac{d}{d\theta}\log L(\theta)&=\frac{1}{\theta}\sum^{n}_{i=1}r_i + \frac{1}{2\theta^2}\sum^{n}_{i=1}x_i^2
+    L(\theta|\boldsymbol{y,r}) &= \bigg( \frac{y_i}{2\theta}\bigg)^{\sum^{n}_{i=1}r_i}\exp\bigg(\frac{\sum^{n}_{i=1}x_i}{2\theta}\bigg)\\
+    \implies \log(L(\theta|\boldsymbol{y,r}))&=-\log\theta\sum^{n}_{i=1}r_i-\frac{\sum^{n}_{i=1}x_i^2}{2\theta}\\
+    \implies \frac{d}{d\theta}\log L(\theta|\boldsymbol{y,r})&=\frac{1}{\theta}\sum^{n}_{i=1}r_i + \frac{1}{2\theta^2}\sum^{n}_{i=1}x_i^2
     \end{split}
 \end{equation} By equating the derivative to $0$, we can obtain the
 maximum likelihood estimate of $\theta$ as below.
@@ -167,6 +167,7 @@ censored if $Y_i < D$, for some known $D$ and let
     0 \quad \text{if} \; Y_i < D
   \end{cases}
 \end{equation*}
+
 ## a)
 
 Show that the log-likelihood of the observed data
@@ -191,11 +192,12 @@ we have the likelihood function as,
 
 
 \begin{equation}
-\begin{split}
-  l(\mu, \sigma^2|\boldsymbol{x}, \boldsymbol{r})&=\log \prod_{i=1}^{n}\left\{\phi(x_i;\mu,\sigma^2)]^{r_i}[\Phi(x_i;\mu, \sigma^2)]^{1-r_i}\right\}\\
-  &= \log \left\{\phi(x_i;\mu,\sigma^2)]^{\sum_i r_i}[\Phi(x_i;\mu, \sigma^2)]^{\sum_i(1-r_i)}\right\}\\
-  &=  \sum_{i=1}^n\left\{r_i\log\phi(x_i; \mu, \sigma^2) + (1-r_i)\log\Phi(x_i;\mu, \sigma^2)\right\}
-\end{split}
+  \begin{split}
+    L(\mu,\sigma^2|\boldsymbol{x,r}) &= \prod^{n}_{i=1}\bigg([\phi(x_i;\mu,\sigma^2)]^{r_i}[\Phi(x_i;\mu,\sigma^2)]^{1-r_i}\bigg)\\
+    \implies l(\mu, \sigma^2|\boldsymbol{x}, \boldsymbol{r})&=\log \prod_{i=1}^{n}\bigg(\phi(x_i;\mu,\sigma^2)]^{r_i}[\Phi(x_i;\mu, \sigma^2)]^{1-r_i}\bigg)\\
+    &= \log \bigg([\phi(x_i;\mu,\sigma^2)]^{\sum^{n}_{i=1} r_i}[\Phi(x_i;\mu, \sigma^2)]^{\sum^{n}_{i=1}(1-r_i)}\bigg)\\
+    &=  \sum_{i=1}^n\bigg(r_i\log\phi(x_i; \mu, \sigma^2) + (1-r_i)\log\Phi(x_i;\mu, \sigma^2)\bigg)
+  \end{split}
 \end{equation}
 
 \newpage
@@ -218,17 +220,19 @@ log.lik <- function(mu, data){
          (1-r)*pnorm(x, mu, 1.5, log = TRUE)))
 }
 
-#computing the maximum likelihood estimare of mu
+#computing the maximum likelihood estimate of mu
 mle <- maxLik(logLik = log.lik, data = dataex2, start = c(mu = 5))
 summary(mle)
 ```
+
+We built a function `log.lik()` that produces the log likelihood and then used `maxLik()` to simulate $\mu$ based on the data. With Newton-Raphson method, we estimated $\hat{\mu}=5.5328$ and standard error of $0.1075$
 
 \newpage
 
 # Q3.
 
 Consider a bivariate normal sample $(Y_1, Y_2)$ with parameters
-$\theta=(\mu_1,\mu_2,\sigma_1^2,\sigma_{12},\sigma_2^2)$ The variable
+$\theta=(\mu_1,\mu_2,\sigma_1^2,\sigma_{12},\sigma_2^2)$. The variable
 $Y_1$ is fully observed, while some values of $Y_2$ are missing. Let $R$
 be the missingness indicator, taking the value 1 for observed values and
 0 for missing values. For the following missing data mechanisms state,
@@ -241,12 +245,18 @@ distinct from $\theta$.
 
 ### **Answer** :
 
+Referring to the ignorability assumption (from **Lecture 6.1**), the missing in $Y_2$ is either **MAR** or **MCAR** and its model parameters, $\theta = (\mu_1, \mu_2, \sigma_1^2, \sigma_{12}, \sigma_2^2)$ and missing mechanism parameter, $\phi$.
+
+First, the missing mechanism is **MAR**. This is because the missingness is only dependent on $Y_1$ which is a fully observed variable. The parameters, $\{\theta,\phi\}$ are also distinct. Therefore, the ignorability assumption holds here and (a) is ignorable for likelihood-based estimation.
+
 ## b)
 
 $\text{logit}\{\mathbb{P}(R=0|y_1,y_2,\theta,\psi)\}=\psi_0+\psi_1y_2,\psi= (\psi_0,\psi_1)$
 distinct from $\theta$.
 
 ### **Answer** :
+
+The missing mechanism is **MNAR**. Referring to the ignorability assumption (from **Lecture 6.1**)
 
 ### c)
 
