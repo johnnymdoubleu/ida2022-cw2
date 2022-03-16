@@ -96,7 +96,17 @@ Then, the Fisher Information for the observed data likelihood is,
 Again, noting that $R_i$ is binary,
 \begin{equation}\label{eq:expR}
   \begin{split}
-    \mathbb{E}(R)=1\cdot\mathbb{P}
+    \mathbb{E}(R)&=1\cdot\mathbb{P}(R=1)+0\cdot\mathbb{P}(R=0)\\
+    &=\mathbb{P}(R=1)=\mathbb{P}(Y\leq C)\\
+    &=F(C;\theta) = 1-e^{-C^2/2\theta}
+  \end{split}
+\end{equation}
+
+With the given equation, $\mathbb{E}(RY^2)=\int_0^Cy^2f(y;\theta)dy = -C^2e^{-C^2/(2\theta)} + 2\theta(1 - e^{-C^2 / (2\theta)})$, we can combine all the above equations as express the Fisher Information again,
+
+\begin{equation}
+  \begin{split}
+    I(\theta)&=\frac{n\mathbb{E}(R)}{\theta^2}+\frac{1}{\theta^3}\bigg(n\mathbb{E}(RY^2)+nC^2\mathbb{E}(1-R)\bigg)
   \end{split}
 \end{equation}
 
