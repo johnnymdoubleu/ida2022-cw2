@@ -220,9 +220,9 @@ pre code {
 <h3><strong>Answer</strong> :</h3>
 <p>From (), we take another derivative of it and thus obtain as below <span class="math display">\[\frac{d^2}{d\theta^2}\log L(\theta)=\frac{1}{\theta^2}\sum^{n}_{i=1}r_i-\frac{x_i^2}{\theta^3}\]</span> Then, the Fisher Information for the observed data likelihood is, <span class="math display">\[\begin{equation}\label{eq:fi}
   \begin{split}
-    I(\theta)&amp;=-\mathbb{E}\bigg(\frac{\sum^{n}_{i=1}r_i}{\theta^2}-\frac{x^2_i}{\theta^3}\bigg)\\
+    I(\theta|\boldsymbol{x,r})&amp;=-\mathbb{E}\bigg(\frac{\sum^{n}_{i=1}r_i}{\theta^2}-\frac{x^2_i}{\theta^3}\bigg)\\
     &amp;=-\frac{n\mathbb{E}(R)}{\theta^2}+\frac{n\mathbb{E}(X^2)}{\theta^3}\\
-    &amp;=-\frac{n\mathbb{E}(R)}{\theta^2}+\frac{1}{\theta^3}\bigg(n\mathbb{E}(RY^2)+nC^2\mathbb{E}(1-R)\bigg)
+    I(\theta|\boldsymbol{y,r})&amp;=-\frac{n\mathbb{E}(R)}{\theta^2}+\frac{1}{\theta^3}\bigg(n\mathbb{E}(RY^2)+nC^2\mathbb{E}(1-R)\bigg)
   \end{split}
 \end{equation}\]</span></p>
 <p>Again, noting that <span class="math inline">\(R_i\)</span> is binary, <span class="math display">\[\begin{equation}\label{eq:expR}
@@ -235,7 +235,7 @@ pre code {
 <p>With the given equation, <span class="math inline">\(\mathbb{E}(RY^2)=\int_0^Cy^2f(y;\theta)dy = -C^2e^{-C^2/(2\theta)} + 2\theta(1 - e^{-C^2 / (2\theta)})\)</span>, we can combine all the above equations as express the expected Fisher Information again,</p>
 <p><span class="math display">\[\begin{equation}
   \begin{split}
-    I(\theta)&amp;=\frac{n\mathbb{E}(R)}{\theta^2}+\frac{1}{\theta^3}\bigg(n\mathbb{E}(RY^2)+nC^2\mathbb{E}(1-R)\bigg)\\
+    I(\theta|\boldsymbol{y,r})&amp;=\frac{n\mathbb{E}(R)}{\theta^2}+\frac{1}{\theta^3}\bigg(n\mathbb{E}(RY^2)+nC^2\mathbb{E}(1-R)\bigg)\\
     &amp;=\frac{-n}{\theta^2}(1-e^{-C^2/2\theta})-\frac{n}{\theta^3}(C^2e^{-C^2/2\theta})+\frac{n}{\theta^3}(2\theta(1-e^{-C^2/2\theta}))+\frac{n}{\theta^3}(C^2e^{-C^2/2\theta}) \\
     &amp;=\frac{n}{\theta^2}(1-e^{-C^2/2\theta}) \quad \text{(shown)}
   \end{split}
@@ -248,9 +248,9 @@ pre code {
 <p>Appealing to the asymptotic normality of the maximum likelihood estimator, provide a <span class="math inline">\(95\%\)</span> confidence interval for <span class="math inline">\(\theta\)</span>.</p>
 <div id="answer-2" class="section level3">
 <h3><strong>Answer</strong> :</h3>
-<p>Asymptotic normality of the maximum likelihood estimator is given as, <span class="math display">\[
-\hat{\theta}\sim N_p(0, I(\theta)^{-1})
-\]</span> Thus, with <span class="math inline">\(0\)</span> and <span class="math inline">\(\frac{1}{I(\theta)}\)</span> as mean and variance respectively, we can obtain the <span class="math inline">\(95\%\)</span> confidence interval as below, <span class="math display">\[\hat{\theta}\pm \frac{1.96}{\sqrt{I(\theta)}}\]</span></p>
+<p>By the Central Limit Theorem, asymptotic normality of the maximum likelihood estimator is given as, <span class="math display">\[
+\sqrt{n}(\hat{\theta}_{MLE}-\theta)\sim N_p(0, I(\theta)^{-1})
+\]</span> Thus, with <span class="math inline">\(0\)</span> and <span class="math inline">\(\frac{1}{I(\theta)}\)</span> as the asymptotic mean and variance respectively, we can obtain the <span class="math inline">\(95\%\)</span> confidence interval as below, <span class="math display">\[\hat{\theta}_{MLE}\pm \frac{1.96}{\sqrt{nI(\theta)}}=\hat{\theta}_{MLE}\pm\frac{1.96\cdot\theta_{MLE}}{\sqrt{n^2(1-e^{-C^2/2\theta_{MLE}})}}\]</span></p>
 <div style="page-break-after: always;"></div>
 </div>
 </div>
@@ -375,28 +375,30 @@ summary(mle)</code></pre>
 <p>We first derive the likelihood function to implement the EM algorithm given that <span class="math inline">\(y_{obs}=y_1,\dots,y_m\)</span> and <span class="math inline">\(y_{mis}=y_{m+1},\dots,y_{n}\)</span>.</p>
 <p><span class="math display">\[\begin{equation}
   \begin{split}
-    L(\beta_0, \beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &amp;= \prod^{n}_{i=1} \bigg([p_i(\beta_0,\beta_1)]^{y_i}[1-p(\beta_0,\beta_1)]^{1-y_i}\bigg)\\
-    \implies L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &amp;= \prod^{n}_{i=1}\bigg( \frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}} \bigg)^{y_i} \bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg)^{1-y_i} \\
-    \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &amp;= \sum^{n}_{i=1} \bigg(y_i\log\bigg(\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg)+(1-y_i)\log\bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg) \bigg)\\
-    \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &amp;=
+    L(\beta_0, \beta_1;\boldsymbol{x,y_{obs},y_{mis}}) &amp;= \prod^{n}_{i=1} \bigg([p_i(\beta_0,\beta_1)]^{y_i}[1-p(\beta_0,\beta_1)]^{1-y_i}\bigg)\\
+    \implies L(\beta_0,\beta_1;\boldsymbol{x,y_{obs},y_{mis}}) &amp;= \prod^{n}_{i=1}\bigg( \frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}} \bigg)^{y_i} \bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg)^{1-y_i} \\
+    \implies \log L(\beta_0,\beta_1;\boldsymbol{x,y_{obs},y_{mis}}) &amp;= \sum^{n}_{i=1} \bigg(y_i\log\bigg(\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg)+(1-y_i)\log\bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg) \bigg)\\
+    \implies \log L(\beta_0,\beta_1;\boldsymbol{x,y_{obs},y_{mis}}) &amp;=
     \sum^{n}_{i=1}\bigg(y_i\log(e^{\beta_0+x_i\beta_1})-\log(1+e^{\beta_0+x_i\beta_1})-y_i\log(1+e^{\beta+x_i\beta_1})+y_i\log(1+e^{\beta+x_i\beta_1}) \bigg) \\
-    \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &amp;= \sum^{n}_{i=1} \bigg(y_i(\beta_0+x_i\beta_1)-\log(1+e^{\beta_0+x_i\beta_1}) \bigg) \\
-    &amp;= l(\boldsymbol{\beta}|\boldsymbol{x,y_{obs},y_{mis}})
+    \implies \log L(\beta_0,\beta_1;\boldsymbol{x,y_{obs},y_{mis}}) &amp;= \sum^{n}_{i=1} \bigg(y_i(\beta_0+x_i\beta_1)-\log(1+e^{\beta_0+x_i\beta_1}) \bigg) \\
+    &amp;= l(\boldsymbol{\beta};\boldsymbol{x,y_{obs},y_{mis}})
   \end{split}
 \end{equation}\]</span></p>
-<p>Now we proceed to implement the EM algorithm by starting with the E-Step first. <span class="math display">\[\begin{equation}
+<p>Now we proceed to implement the EM algorithm by calculating <span class="math inline">\(Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}})\)</span> <span class="math display">\[\begin{equation}
   \begin{split}
     Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}})&amp;=\mathbb{E}_{\boldsymbol{y_{mis}}}
-    [l(\boldsymbol{\beta}|\boldsymbol{x, y_{obs}, y_{mis}})|\boldsymbol{y_{obs}, x, \beta^{(t)}}] \\
+    [l(\boldsymbol{\beta};\boldsymbol{x, y_{obs}, y_{mis}})|\boldsymbol{y_{obs}, x, \beta^{(t)}}] \\
     &amp;=\sum^{m}_{i=1}\bigg(y_i(\beta_0 + x_i\beta_i)\bigg)-\sum^{n}_{i=1}\bigg(\log(1 + e^{\beta_0 + x_i\beta_1})\bigg) + \sum^{n}_{i=m+1}\bigg( (\beta_0+x_i\beta_1) \mathbb{E}_{\boldsymbol{y_{mis}}}[y_i|\boldsymbol{x, y_{obs}, \beta^{(t)}}] \bigg) \\
     &amp;=\sum^{m}_{i=1}\bigg(y_i(\beta_0+x_i\beta_i)\bigg)-\sum^{n}_{i=1}\bigg(\log(1 + e^{\beta_0 + x_i\beta_1})\bigg) + \sum^{n}_{i=m+1}\bigg( (\beta_0 + x_i\beta_1)p_i(\beta) \bigg) \\
     &amp;(\mathbb{E}(Y_i)=p_i(\boldsymbol{\beta}) \text{ as } Y_i\sim\text{Bernoulli}(p_i(\boldsymbol{\beta})))
   \end{split}
 \end{equation}\]</span></p>
-<p>Next step follow with M-step. <!-- \begin{equation} --> <!--   \begin{split} --></p>
+<p>Next step follow with M-step by computing the partial derivatives. <!-- \begin{equation} --> <!--   \begin{split} --></p>
 <!--   \end{split} -->
 <!-- \end{equation} -->
 <!-- \newpage -->
+<p>In the code, we have used for the stopping criterion as below <span class="math display">\[|p^{(t+1)}-p^{(t)}|+|\beta_0^{(t+1)}-\beta_0^{(t)}|+|\beta_1^{(t+1)}-\beta_1^{(t)}|&lt;\varepsilon\]</span></p>
+<div style="page-break-after: always;"></div>
 </div>
 <div id="q5" class="section level2">
 <h2>Q5</h2>
@@ -408,15 +410,43 @@ summary(mle)</code></pre>
   f_{\text{Exp}}(y;\lambda) &amp;= \lambda e^{-\lambda y}, \quad y \geq 0, \quad \lambda &gt; 0
   \end{split}
 \end{equation*}\]</span></p>
-<p>and <span class="math inline">\(\boldsymbol{\theta} = (p, \mu, \sigma^2, \lambda)\)</span> ## a) Derive the EM algorithm to find the updating equations for <span class="math inline">\(\boldsymbol{\theta^{(t+1)}} = (p^{(t+1)}, \mu^{(t+1)}, (\sigma^{(t+1)})^2, \lambda^{(t+1)})\)</span>.</p>
+<p>and <span class="math inline">\(\boldsymbol{\theta} = (p, \mu, \sigma^2, \lambda)\)</span></p>
+</div>
+<div id="a-3" class="section level2">
+<h2>a)</h2>
+<p>Derive the EM algorithm to find the updating equations for <span class="math inline">\(\boldsymbol{\theta^{(t+1)}} = (p^{(t+1)}, \mu^{(t+1)}, (\sigma^{(t+1)})^2, \lambda^{(t+1)})\)</span>.</p>
 <div id="answer-9" class="section level3">
 <h3><strong>Answer</strong> :</h3>
+<p>Let us consider a mixture model of Log-Normal and Exponential distributions. <span class="math display">\[\mathbb{P}(Y\leq y)=p\cdot\frac{1}{y\sqrt{2\pi\sigma^2}}\text{exp}\left\{\frac{1}{2\sigma^2}(\log y - \mu)^2\right\}+(1-p)\cdot\lambda e^{-\lambda y}\]</span></p>
+<p>Let <span class="math inline">\(z_i\)</span> be binary latent variables indicating component membership, i.e.</p>
+<p><span class="math display">\[\begin{equation*}
+  z_i=
+  \begin{cases}
+    1 &amp; \text{if } y_i \text{ belong to } f_{\text{LogNormal}}(y;\mu, \sigma^2) \\
+    0 &amp; \text{if } y_i \text{ belong to } f_{\text{Exp}}(y;\lambda)
+  \end{cases}
+\end{equation*}\]</span></p>
+<p>The observed data in this context is <span class="math inline">\(\boldsymbol{y}=(y_1\dots y_n)\)</span> and the missing data is <span class="math inline">\(\boldsymbol{z}=(z_1\dots z_n)\)</span>. The likelihood of the complete data <span class="math inline">\((\boldsymbol{y,z})\)</span> is <span class="math display">\[\begin{equation}
+  \begin{split}
+    L(\theta;\boldsymbol{y,z})&amp;=\prod^{n}_{i=1}\bigg(p\cdot\frac{1}{y_i\sqrt{2\pi\sigma^2}}\text{exp}\left\{\frac{1}{2\sigma^2}(\log y_i - \mu)^2\right\}\bigg)^{z_i}\bigg((1-p)\cdot\lambda e^{-\lambda y_i}\bigg)^{1-z_i} \\
+    \implies \log L(\theta;\boldsymbol{y,z})&amp;=\sum^{n}_{i=1}z_i\bigg(p\cdot\frac{1}{y_i\sqrt{2\pi\sigma^2}}\text{exp}\left\{\frac{1}{2\sigma^2}(\log y_i - \mu)^2\right\}\bigg)+\sum^{n}_{i=1}(1-z_i)\bigg((1-p)\cdot\lambda e^{-\lambda y_i}\bigg)
+  \end{split}
+\end{equation}\]</span></p>
+<p>with the corresponding log likelihood, we proceed to E-Step,</p>
+<p><span class="math display">\[\begin{equation}
+  \begin{split}
+    Q(\boldsymbol{\theta};\boldsymbol{\theta^{(t)}})&amp;=\mathbb{E}_{Z}(\log L(\theta;\boldsymbol{y,z})|\boldsymbol{y,\theta^{(t)}})\\
+    &amp;=
+  \end{split}
+\end{equation}\]</span></p>
 </div>
 </div>
 <div id="b-3" class="section level2">
 <h2>b)</h2>
 <p>Using the dataset <code>datasetex5.Rdata</code> implement the EM algorithm and find the MLEs for each component of <span class="math inline">\(\theta\)</span>. As starting values, you might want to consider <span class="math inline">\(\theta^{(0)} = (p^{(0)}, \mu^{0)}, (\sigma^{(0)})^2, \lambda^{(0)}) = (0.1, 1, 0.5^2, 2)\)</span>. Draw the histogram of the data with the estimated density superimposed.</p>
-<p>### <strong>Answer</strong> :</p>
+<div id="answer-10" class="section level3">
+<h3><strong>Answer</strong> :</h3>
+</div>
 </div>
 </div>
 

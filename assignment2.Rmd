@@ -2,8 +2,8 @@
 title: "IDA Assignment 2"
 author: "Johnny Lee, s1687781"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -99,9 +99,9 @@ $$\frac{d^2}{d\theta^2}\log L(\theta)=\frac{1}{\theta^2}\sum^{n}_{i=1}r_i-\frac{
 Then, the Fisher Information for the observed data likelihood is,
 \begin{equation}\label{eq:fi}
   \begin{split}
-    I(\theta)&=-\mathbb{E}\bigg(\frac{\sum^{n}_{i=1}r_i}{\theta^2}-\frac{x^2_i}{\theta^3}\bigg)\\
+    I(\theta|\boldsymbol{x,r})&=-\mathbb{E}\bigg(\frac{\sum^{n}_{i=1}r_i}{\theta^2}-\frac{x^2_i}{\theta^3}\bigg)\\
     &=-\frac{n\mathbb{E}(R)}{\theta^2}+\frac{n\mathbb{E}(X^2)}{\theta^3}\\
-    &=-\frac{n\mathbb{E}(R)}{\theta^2}+\frac{1}{\theta^3}\bigg(n\mathbb{E}(RY^2)+nC^2\mathbb{E}(1-R)\bigg)
+    I(\theta|\boldsymbol{y,r})&=-\frac{n\mathbb{E}(R)}{\theta^2}+\frac{1}{\theta^3}\bigg(n\mathbb{E}(RY^2)+nC^2\mathbb{E}(1-R)\bigg)
   \end{split}
 \end{equation}
 
@@ -120,7 +120,7 @@ Information again,
 
 \begin{equation}
   \begin{split}
-    I(\theta)&=\frac{n\mathbb{E}(R)}{\theta^2}+\frac{1}{\theta^3}\bigg(n\mathbb{E}(RY^2)+nC^2\mathbb{E}(1-R)\bigg)\\
+    I(\theta|\boldsymbol{y,r})&=\frac{n\mathbb{E}(R)}{\theta^2}+\frac{1}{\theta^3}\bigg(n\mathbb{E}(RY^2)+nC^2\mathbb{E}(1-R)\bigg)\\
     &=\frac{-n}{\theta^2}(1-e^{-C^2/2\theta})-\frac{n}{\theta^3}(C^2e^{-C^2/2\theta})+\frac{n}{\theta^3}(2\theta(1-e^{-C^2/2\theta}))+\frac{n}{\theta^3}(C^2e^{-C^2/2\theta}) \\
     &=\frac{n}{\theta^2}(1-e^{-C^2/2\theta}) \quad \text{(shown)}
   \end{split}
@@ -135,11 +135,11 @@ estimator, provide a $95\%$ confidence interval for $\theta$.
 
 ### **Answer** :
 
-Asymptotic normality of the maximum likelihood estimator is given as, $$
-\hat{\theta}\sim N_p(0, I(\theta)^{-1})
-$$ Thus, with $0$ and $\frac{1}{I(\theta)}$ as mean and variance
+By the Central Limit Theorem, asymptotic normality of the maximum likelihood estimator is given as, $$
+\sqrt{n}(\hat{\theta}_{MLE}-\theta)\sim N_p(0, I(\theta)^{-1})
+$$ Thus, with $0$ and $\frac{1}{I(\theta)}$ as the asymptotic mean and variance
 respectively, we can obtain the $95\%$ confidence interval as below,
-$$\hat{\theta}\pm \frac{1.96}{\sqrt{I(\theta)}}$$
+  $$\hat{\theta}_{MLE}\pm \frac{1.96}{\sqrt{nI(\theta)}}=\hat{\theta}_{MLE}\pm\frac{1.96\cdot\theta_{MLE}}{\sqrt{n^2(1-e^{-C^2/2\theta_{MLE}})}}$$
 
 \newpage
 
@@ -360,7 +360,7 @@ Derive the EM algorithm to find the updating equations for $\boldsymbol{\theta^{
 Let us consider a mixture model of Log-Normal and Exponential distributions.
 $$\mathbb{P}(Y\leq y)=p\cdot\frac{1}{y\sqrt{2\pi\sigma^2}}\text{exp}\left\{\frac{1}{2\sigma^2}(\log y - \mu)^2\right\}+(1-p)\cdot\lambda e^{-\lambda y}$$
 
-Let $z_i$ be binary latent variables indicating component membership, i.e.
+Let $z_i$ be the binary latent variables indicating component membership, i.e.
 
 \begin{equation*}
   z_i=
