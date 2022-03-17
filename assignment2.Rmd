@@ -3,8 +3,8 @@ title: "IDA Assignment 2"
 author: "Johnny Lee, s1687781"
 date: "25th March 2022"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -12,8 +12,6 @@ knitr::opts_chunk$set(echo = TRUE)
 Sys.setlocale("LC_ALL", "English")
 library(maxLik)
 load("dataex2.Rdata")
-load("dataex4.Rdata")
-load("dataex5.Rdata")
 ```
 
 # Q1.
@@ -136,11 +134,13 @@ estimator, provide a $95\%$ confidence interval for $\theta$.
 
 ### **Answer** :
 
-By the Central Limit Theorem, asymptotic normality of the maximum likelihood estimator is given as, $$
-\sqrt{n}(\hat{\theta}_{MLE}-\theta)\sim N_p(0, I(\theta)^{-1})
-$$ Thus, with $0$ and $\frac{1}{I(\theta)}$ as the asymptotic mean and variance
+By the Central Limit Theorem, asymptotic normality of the maximum likelihood estimator is given as, 
+<!-- $$\sqrt{n}(\hat{\theta}_{MLE}-\theta)\sim N_p(0, I(\theta)^{-1})$$.  -->
+$$\hat{\theta}_{MLE}\sim N_p(\theta, I(\theta)^{-1})$$
+Thus, with $0$ and $\frac{1}{I(\theta)}$ as the asymptotic mean and variance
 respectively, we can obtain the $95\%$ confidence interval as below,
-  $$\hat{\theta}_{MLE}\pm \frac{1.96}{\sqrt{nI(\theta)}}=\hat{\theta}_{MLE}\pm\frac{1.96\cdot\theta_{MLE}}{\sqrt{n^2(1-e^{-C^2/2\theta_{MLE}})}}$$
+  $$\hat{\theta}_{MLE}\pm \frac{1.96}{\sqrt{I(\theta)}}=\hat{\theta}_{MLE}\pm\frac{1.96\cdot\theta_{MLE}}{\sqrt{n(1-e^{-C^2/2\theta_{MLE}})}}$$
+  <!-- $$\hat{\theta}_{MLE}\pm \frac{1.96}{\sqrt{nI(\theta)}}=\hat{\theta}_{MLE}\pm\frac{1.96\cdot\theta_{MLE}}{\sqrt{n^2(1-e^{-C^2/2\theta_{MLE}})}}$$ -->
 
 \newpage
 
@@ -289,6 +289,7 @@ the M-step.
 ### **Answer** :
 
 ```{r}
+load("dataex4.Rdata")
 head(dataex4)
 cat("Number of missing values in Y:", sum(is.na(dataex4)))
 ```
@@ -308,22 +309,76 @@ We first derive the likelihood function to implement the EM algorithm given that
   \end{split}
 \end{equation}
 
+Then the score function is give by,
+\begin{equation}
+  \begin{split}
+    U(\beta_0)=\frac{d}{d\beta_0}l(\boldsymbol{\beta};\boldsymbol{x,y_{obs},y_{mis}}) = \sum^{n}_{i}\bigg(y_i-\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg) \\
+    U(\beta_1)=\frac{d}{d\beta_1}l(\boldsymbol{\beta};\boldsymbol{x,y_{obs},y_{mis}}) =
+  \end{split}
+\end{equation}
+
 Now we proceed to implement the EM algorithm by calculating $Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}})$
 \begin{equation}
   \begin{split}
     Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}})&=\mathbb{E}_{\boldsymbol{y_{mis}}}
     [l(\boldsymbol{\beta};\boldsymbol{x, y_{obs}, y_{mis}})|\boldsymbol{y_{obs}, x, \beta^{(t)}}] \\
-    &=\sum^{m}_{i=1}\bigg(y_i(\beta_0 + x_i\beta_i)\bigg)-\sum^{n}_{i=1}\bigg(\log(1 + e^{\beta_0 + x_i\beta_1})\bigg) + \sum^{n}_{i=m+1}\bigg( (\beta_0+x_i\beta_1) \mathbb{E}_{\boldsymbol{y_{mis}}}[y_i|\boldsymbol{x, y_{obs}, \beta^{(t)}}] \bigg) \\
-    &=\sum^{m}_{i=1}\bigg(y_i(\beta_0+x_i\beta_i)\bigg)-\sum^{n}_{i=1}\bigg(\log(1 + e^{\beta_0 + x_i\beta_1})\bigg) + \sum^{n}_{i=m+1}\bigg( (\beta_0 + x_i\beta_1)p_i(\beta) \bigg) \\
+    &=\sum^{m}_{i=1}\bigg(y_i(\beta_0 + x_i\beta_i)\bigg)-\sum^{m}_{i=1}\bigg(\log(1 + e^{\beta_0 + x_i\beta_1})\bigg) + \sum^{n}_{i=m+1}\bigg( (\beta_0+x_i\beta_1) \mathbb{E}_{\boldsymbol{y_{mis}}}[y_i|\boldsymbol{x, y_{obs}, \beta^{(t)}}] \bigg) \\
+    &=\sum^{m}_{i=1}\bigg(y_i(\beta_0+x_i\beta_i)\bigg)-\sum^{m}_{i=1}\bigg(\log(1 + e^{\beta_0 + x_i\beta_1})\bigg) + \sum^{n}_{i=m+1}\bigg( (\beta_0 + x_i\beta_1)p_i(\beta) \bigg) \\
     &(\mathbb{E}(Y_i)=p_i(\boldsymbol{\beta}) \text{ as } Y_i\sim\text{Bernoulli}(p_i(\boldsymbol{\beta})))
   \end{split}
 \end{equation}
+
+Now we differentiate $Q$ with respect to $\beta_0$ and $\beta_1$
+\begin{equation}
+  \begin{split}
+    \frac{d}{d\beta_0}Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}}) &=\sum^{m}_{i=1}\bigg(y_i-\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg) + \sum^{n}_{i=m+1}\bigg(\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}+x_i\beta_1\frac{e^{\beta_0+x_i\beta_1}}{(1+e^{\beta_0+x_i\beta_1})^2}+\beta_0\frac{e^{\beta_0+x_i\beta_1}}{(1+e^{\beta_0+x_i\beta_1})^2} \bigg)\\
+    \frac{d}{d\beta_1}Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}}) &=\sum^{m}_{i=1}\bigg(y_ix_i-x_i\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg) + \sum^{n}_{i=m+1}\bigg(\beta_0\frac{x_ie^{\beta_0+x_i\beta_1}}{(1+e^{\beta_0+x_i\beta_1})^2}+x_i\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}+x_i\beta_1\frac{x_ie^{\beta_0+x_i\beta_1}}{(1+e^{\beta_0+x_i\beta_1})^2} \bigg)\\
+  \end{split}
+\end{equation}
+
+The solutions of the derivatives have no closed form expression and thus we need to resort to numerical methods. 
+Before we proceed to the code, we first need to preprocess `dataex4` by arranging it.
+```{r}
+dataex4 <- dataex4[order(dataex4$Y),]
+row.names(dataex4) <- NULL
+head(dataex4,5)
+tail(dataex4,5)
+```
 
 
 In the code, we have used for the stopping criterion as below
 <!-- $$|p^{(t+1)}-p^{(t)}|+-->$$|\beta_0^{(t+1)}-\beta_0^{(t)}|+|\beta_1^{(t+1)}-\beta_1^{(t)}|<\varepsilon$$ 
 
-```{r}
+```{r warning=FALSE}
+log.lik.bernoulli <- function(param, data){
+  beta0 <- param[1]; beta1 <- param[2]
+  x <- data[, 1]; y <- data[, 2]
+  express <- beta0+x[1:405]*beta1
+  express.na <- beta0+x[406:500]*beta1
+  # sum(y[1:405]-(express/(1+express)))+sum((express/(1+express))+x[406:500]*(express/(1+express)^2)+beta0*(express/(1+express)^2))
+  sum(y[1:405]*express-log(1+express)+express.na*express.na/(1+express.na))
+}
+
+mle <- maxLik(logLik = log.lik.bernoulli, data=dataex4, start=c(0, 0))$estimate
+# mle <- optim(c(0, 0), log.lik.bernoulli, data = dataex4, control = list(fnscale = -1), hessian = TRUE)$par
+beta <- c(0,0)
+i <- TRUE
+diff <- 1
+while(diff > 0.00001){
+#     mle <- optim(beta, log.lik.bernoulli, data = dataex4,
+# control = list(fnscale = -1), hessian = TRUE)$par
+    mle <- maxLik(logLik = log.lik.bernoulli, data=dataex4, start = beta)
+    diff <- sum(abs(mle$estimate-beta))
+    print(diff)
+    beta <- mle$estimate
+  # if(diff >0.00001){
+  # 
+  # }
+  # else{
+  #   i==FALSE
+  # }
+}
+beta
 
 ```
 
@@ -390,4 +445,7 @@ want to consider $\theta^{(0)} = (p^{(0)}, \mu^{0)}, (\sigma^{(0)})^2, \lambda^{
 
 ### **Answer** :
 
+```{r}
+load("dataex5.Rdata")
+```
 
