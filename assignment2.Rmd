@@ -297,13 +297,13 @@ We first derive the likelihood function to implement the EM algorithm given that
 
 \begin{equation}
   \begin{split}
-    L(\beta_0, \beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &= \prod^{n}_{i=1} \bigg([p_i(\beta_0,\beta_1)]^{y_i}[1-p(\beta_0,\beta_1)]^{1-y_i}\bigg)\\
-    \implies L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &= \prod^{n}_{i=1}\bigg( \frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}} \bigg)^{y_i} \bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg)^{1-y_i} \\
-    \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &= \sum^{n}_{i=1} \bigg(y_i\log\bigg(\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg)+(1-y_i)\log\bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg) \bigg)\\
-    \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &=
+    L(\beta_0, \beta_1;\boldsymbol{x,y_{obs},y_{mis}}) &= \prod^{n}_{i=1} \bigg([p_i(\beta_0,\beta_1)]^{y_i}[1-p(\beta_0,\beta_1)]^{1-y_i}\bigg)\\
+    \implies L(\beta_0,\beta_1;\boldsymbol{x,y_{obs},y_{mis}}) &= \prod^{n}_{i=1}\bigg( \frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}} \bigg)^{y_i} \bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg)^{1-y_i} \\
+    \implies \log L(\beta_0,\beta_1;\boldsymbol{x,y_{obs},y_{mis}}) &= \sum^{n}_{i=1} \bigg(y_i\log\bigg(\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg)+(1-y_i)\log\bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg) \bigg)\\
+    \implies \log L(\beta_0,\beta_1;\boldsymbol{x,y_{obs},y_{mis}}) &=
     \sum^{n}_{i=1}\bigg(y_i\log(e^{\beta_0+x_i\beta_1})-\log(1+e^{\beta_0+x_i\beta_1})-y_i\log(1+e^{\beta+x_i\beta_1})+y_i\log(1+e^{\beta+x_i\beta_1}) \bigg) \\
-    \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &= \sum^{n}_{i=1} \bigg(y_i(\beta_0+x_i\beta_1)-\log(1+e^{\beta_0+x_i\beta_1}) \bigg) \\
-    &= l(\boldsymbol{\beta}|\boldsymbol{x,y_{obs},y_{mis}})
+    \implies \log L(\beta_0,\beta_1;\boldsymbol{x,y_{obs},y_{mis}}) &= \sum^{n}_{i=1} \bigg(y_i(\beta_0+x_i\beta_1)-\log(1+e^{\beta_0+x_i\beta_1}) \bigg) \\
+    &= l(\boldsymbol{\beta};\boldsymbol{x,y_{obs},y_{mis}})
   \end{split}
 \end{equation}
 
@@ -311,7 +311,7 @@ Now we proceed to implement the EM algorithm by calculating $Q(\boldsymbol{\beta
 \begin{equation}
   \begin{split}
     Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}})&=\mathbb{E}_{\boldsymbol{y_{mis}}}
-    [l(\boldsymbol{\beta}|\boldsymbol{x, y_{obs}, y_{mis}})|\boldsymbol{y_{obs}, x, \beta^{(t)}}] \\
+    [l(\boldsymbol{\beta};\boldsymbol{x, y_{obs}, y_{mis}})|\boldsymbol{y_{obs}, x, \beta^{(t)}}] \\
     &=\sum^{m}_{i=1}\bigg(y_i(\beta_0 + x_i\beta_i)\bigg)-\sum^{n}_{i=1}\bigg(\log(1 + e^{\beta_0 + x_i\beta_1})\bigg) + \sum^{n}_{i=m+1}\bigg( (\beta_0+x_i\beta_1) \mathbb{E}_{\boldsymbol{y_{mis}}}[y_i|\boldsymbol{x, y_{obs}, \beta^{(t)}}] \bigg) \\
     &=\sum^{m}_{i=1}\bigg(y_i(\beta_0+x_i\beta_i)\bigg)-\sum^{n}_{i=1}\bigg(\log(1 + e^{\beta_0 + x_i\beta_1})\bigg) + \sum^{n}_{i=m+1}\bigg( (\beta_0 + x_i\beta_1)p_i(\beta) \bigg) \\
     &(\mathbb{E}(Y_i)=p_i(\boldsymbol{\beta}) \text{ as } Y_i\sim\text{Bernoulli}(p_i(\boldsymbol{\beta})))
@@ -334,6 +334,8 @@ $$|p^{(t+1)}-p^{(t)}|+|\beta_0^{(t+1)}-\beta_0^{(t)}|+|\beta_1^{(t+1)}-\beta_1^{
 ```
 
 
+\newpage
+
 ## Q5
 
 Consider a random sample $Y_1,...,Y_n$ from the mixture distribution
@@ -350,9 +352,8 @@ with \begin{equation*}
 
 and $\boldsymbol{\theta} = (p, \mu, \sigma^2, \lambda)$ 
 
-## a) Derive the
-EM algorithm to find the updating equations for
-$\boldsymbol{\theta^{(t+1)}} = (p^{(t+1)}, \mu^{(t+1)}, (\sigma^{(t+1)})^2, \lambda^{(t+1)})$.
+## a) 
+Derive the EM algorithm to find the updating equations for $\boldsymbol{\theta^{(t+1)}} = (p^{(t+1)}, \mu^{(t+1)}, (\sigma^{(t+1)})^2, \lambda^{(t+1)})$.
 
 ### **Answer** :
 
@@ -372,9 +373,20 @@ Let $z_i$ be binary latent variables indicating component membership, i.e.
 The observed data in this context is $\boldsymbol{y}=(y_1\dots y_n)$ and the missing data is $\boldsymbol{z}=(z_1\dots z_n)$. The likelihood of the complete data $(\boldsymbol{y,z})$ is
 \begin{equation}
   \begin{split}
-    
+    L(\theta;\boldsymbol{y,z})&=\prod^{n}_{i=1}\bigg(p\cdot\frac{1}{y_i\sqrt{2\pi\sigma^2}}\text{exp}\left\{\frac{1}{2\sigma^2}(\log y_i - \mu)^2\right\}\bigg)^{z_i}\bigg((1-p)\cdot\lambda e^{-\lambda y_i}\bigg)^{1-z_i} \\
+    \implies \log L(\theta;\boldsymbol{y,z})&=\sum^{n}_{i=1}z_i\bigg(p\cdot\frac{1}{y_i\sqrt{2\pi\sigma^2}}\text{exp}\left\{\frac{1}{2\sigma^2}(\log y_i - \mu)^2\right\}\bigg)+\sum^{n}_{i=1}(1-z_i)\bigg((1-p)\cdot\lambda e^{-\lambda y_i}\bigg)
   \end{split}
 \end{equation}
+
+with the corresponding log likelihood, we proceed to E-Step,
+
+\begin{equation}
+  \begin{split}
+    Q(\boldsymbol{\theta};\boldsymbol{\theta^{(t)}})&=\mathbb{E}_{Z}(\log L(\theta;\boldsymbol{y,z})|\boldsymbol{y,\theta^{(t)}})\\
+    &=
+  \end{split}
+\end{equation}
+
 
 ## b)
 
