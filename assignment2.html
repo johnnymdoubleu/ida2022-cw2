@@ -350,17 +350,53 @@ summary(mle)</code></pre>
 </div>
 <div id="answer-7" class="section level3">
 <h3><strong>Answer</strong> :</h3>
-<p>The missing mechanism here is dependent on both <span class="math inline">\(\mu_1\)</span> and <span class="math inline">\(Y_1\)</span>. We can observe similarity to (a). Distinctness of the parameters means that the parameter space of <span class="math inline">\((\theta, \psi)\)</span> is equal to the Cartesian product of their individual product spaces. However, the <span class="math inline">\(\mu_1\)</span> also exists in the parameter space. This violates the ignorability assumption. Hence, (c) is not ignorable for likelihood-based estimation</p>
+<p>The missing mechanism here is dependent on both <span class="math inline">\(\mu_1\)</span> and <span class="math inline">\(Y_1\)</span>. We can observe similarity to (a). Distinctness of the parameters means that the parameter space of <span class="math inline">\((\theta, \psi)\)</span> is equal to the Cartesian product of their individual product spaces. However, the <span class="math inline">\(\mu_1\)</span> also exists in the parameter space. This violates the ignorability assumption. Hence, (c) is not ignorable for likelihood-based estimation.</p>
 <div style="page-break-after: always;"></div>
 </div>
 </div>
 </div>
 <div id="q4." class="section level1">
 <h1>Q4.</h1>
-<p><span class="math display">\[Y_i\overset{\text{ind.}}{\sim} \text{Bernoulli}(p_i(\boldsymbol{\beta})\]</span></p>
-<p><span class="math display">\[p_i(\boldsymbol{\beta}) = \frac{exp(\beta_0 + x_i\beta_1)}{1 + exp(\beta_0 + x_i\beta_1)},\]</span> for <span class="math inline">\(i=1,\cdots,n\)</span> and <span class="math inline">\(\boldsymbol{\beta} = (\beta_0, \beta_1)&#39;\)</span>. Although the covariate <span class="math inline">\(x\)</span> is fully observed, the response variable <span class="math inline">\(Y\)</span> has missing values. Assuming ignorability, derive and implement the EM algorithm to compute the MLE of <span class="math inline">\(\boldsymbol{\beta}\)</span> based on the data available in <code>dataex4.Rdata</code>. <strong>Note</strong>: <span class="math inline">\(1\)</span>) For simplicity, and without loss of generality because we have a univariate pattern of missingness, when writing down your expressions, you can assume that the first <span class="math inline">\(m\)</span> values of <span class="math inline">\(Y\)</span> are observed and the remaining <span class="math inline">\(n-m\)</span> are missing. <span class="math inline">\(2\)</span>) You can use a built in function such as <code>optim</code> or the <code>maxLik</code> package for the M-step</p>
+<p><span class="math display">\[Y_i\overset{\text{ind.}}{\sim} \text{Bernoulli}(p_i(\boldsymbol{\beta}))\]</span></p>
+<p><span class="math display">\[p_i(\boldsymbol{\beta}) = \frac{exp(\beta_0 + x_i\beta_1)}{1 + exp(\beta_0 + x_i\beta_1)},\]</span> for <span class="math inline">\(i=1,\cdots,n\)</span> and <span class="math inline">\(\boldsymbol{\beta} = (\beta_0, \beta_1)&#39;\)</span>. Although the covariate <span class="math inline">\(x\)</span> is fully observed, the response variable <span class="math inline">\(Y\)</span> has missing values. Assuming ignorability, derive and implement the EM algorithm to compute the MLE of <span class="math inline">\(\boldsymbol{\beta}\)</span> based on the data available in <code>dataex4.Rdata</code>. <strong>Note</strong>: <span class="math inline">\(1\)</span>) For simplicity, and without loss of generality because we have a univariate pattern of missingness, when writing down your expressions, you can assume that the first <span class="math inline">\(m\)</span> values of <span class="math inline">\(Y\)</span> are observed and the remaining <span class="math inline">\(n-m\)</span> are missing. <span class="math inline">\(2\)</span>) You can use a built in function such as <code>optim</code> or the <code>maxLik</code> package for the M-step.</p>
 <div id="answer-8" class="section level3">
 <h3><strong>Answer</strong> :</h3>
+<pre class="r"><code>head(dataex4)</code></pre>
+<pre><code>##            X  Y
+## 1 -0.4689827  1
+## 2 -0.2557522  1
+## 3  0.1457067  1
+## 4  0.8164156 NA
+## 5 -0.5966361  1
+## 6  0.7967794 NA</code></pre>
+<pre class="r"><code>cat(&quot;Number of missing values in Y:&quot;, sum(is.na(dataex4)))</code></pre>
+<pre><code>## Number of missing values in Y: 95</code></pre>
+<p>Scrutinising on the dataset, we can observe that the missing value only occurs in <span class="math inline">\(Y\)</span> and there are <span class="math inline">\(95\)</span> missing values occurring in a univariate pattern</p>
+<p>We first derive the likelihood function to implement the EM algorithm given that <span class="math inline">\(y_{obs}=y_1,\dots,y_m\)</span> and <span class="math inline">\(y_{mis}=y_{m+1},\dots,y_{n}\)</span>.</p>
+<p><span class="math display">\[\begin{equation}
+  \begin{split}
+    L(\beta_0, \beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &amp;= \prod^{n}_{i=1} \bigg([p_i(\beta_0,\beta_1)]^{y_i}[1-p(\beta_0,\beta_1)]^{1-y_i}\bigg)\\
+    \implies L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &amp;= \prod^{n}_{i=1}\bigg( \frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}} \bigg)^{y_i} \bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg)^{1-y_i} \\
+    \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &amp;= \sum^{n}_{i=1} \bigg(y_i\log\bigg(\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg)+(1-y_i)\log\bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg) \bigg)\\
+    \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &amp;=
+    \sum^{n}_{i=1}\bigg(y_i\log(e^{\beta_0+x_i\beta_1})-\log(1+e^{\beta_0+x_i\beta_1})-y_i\log(1+e^{\beta+x_i\beta_1})+y_i\log(1+e^{\beta+x_i\beta_1}) \bigg) \\
+    \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &amp;= \sum^{n}_{i=1} \bigg(y_i(\beta_0+x_i\beta_1)-\log(1+e^{\beta_0+x_i\beta_1}) \bigg) \\
+    &amp;= l(\boldsymbol{\beta}|\boldsymbol{x,y_{obs},y_{mis}})
+  \end{split}
+\end{equation}\]</span></p>
+<p>Now we proceed to implement the EM algorithm by starting with the E-Step first. <span class="math display">\[\begin{equation}
+  \begin{split}
+    Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}})&amp;=\mathbb{E}_{\boldsymbol{y_{mis}}}
+    [l(\boldsymbol{\beta}|\boldsymbol{x, y_{obs}, y_{mis}})|\boldsymbol{y_{obs}, x, \beta^{(t)}}] \\
+    &amp;=\sum^{m}_{i=1}\bigg(y_i(\beta_0 + x_i\beta_i)\bigg)-\sum^{n}_{i=1}\bigg(\log(1 + e^{\beta_0 + x_i\beta_1})\bigg) + \sum^{n}_{i=m+1}\bigg( (\beta_0+x_i\beta_1) \mathbb{E}_{\boldsymbol{y_{mis}}}[y_i|\boldsymbol{x, y_{obs}, \beta^{(t)}}] \bigg) \\
+    &amp;=\sum^{m}_{i=1}\bigg(y_i(\beta_0+x_i\beta_i)\bigg)-\sum^{n}_{i=1}\bigg(\log(1 + e^{\beta_0 + x_i\beta_1})\bigg) + \sum^{n}_{i=m+1}\bigg( (\beta_0 + x_i\beta_1)p_i(\beta) \bigg) \\
+    &amp;(\mathbb{E}(Y_i)=p_i(\boldsymbol{\beta}) \text{ as } Y_i\sim\text{Bernoulli}(p_i(\boldsymbol{\beta})))
+  \end{split}
+\end{equation}\]</span></p>
+<p>Next step follow with M-step. <!-- \begin{equation} --> <!--   \begin{split} --></p>
+<!--   \end{split} -->
+<!-- \end{equation} -->
+<!-- \newpage -->
 </div>
 <div id="q5" class="section level2">
 <h2>Q5</h2>
@@ -379,7 +415,8 @@ summary(mle)</code></pre>
 </div>
 <div id="b-3" class="section level2">
 <h2>b)</h2>
-<p>Using the dataset <code>datasetex5.Rdata</code> implement the EM algorithm and find the MLEs for each component of <span class="math inline">\(\theta\)</span>. As starting values, you might want to consider <span class="math inline">\(\theta^{(0)} = (p^{(0)}, \mu^{0)}, (\sigma^{(0)})^2, \lambda^{(0)}) = (0.1, 1, 0.5^2, 2)\)</span>. Draw the histogram of the data with the estimated density superimposed. ### <strong>Answer</strong> :</p>
+<p>Using the dataset <code>datasetex5.Rdata</code> implement the EM algorithm and find the MLEs for each component of <span class="math inline">\(\theta\)</span>. As starting values, you might want to consider <span class="math inline">\(\theta^{(0)} = (p^{(0)}, \mu^{0)}, (\sigma^{(0)})^2, \lambda^{(0)}) = (0.1, 1, 0.5^2, 2)\)</span>. Draw the histogram of the data with the estimated density superimposed.</p>
+<p>### <strong>Answer</strong> :</p>
 </div>
 </div>
 

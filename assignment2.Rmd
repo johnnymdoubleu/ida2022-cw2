@@ -287,17 +287,49 @@ the M-step.
 
 ### **Answer** :
 
-We first derive the likelihood function.
+```{r}
+head(dataex4)
+cat("Number of missing values in Y:", sum(is.na(dataex4)))
+```
+Scrutinising on the dataset, we can observe that the missing value only occurs in $Y$ and there are $95$ missing values occurring in a univariate pattern
+
+We first derive the likelihood function to implement the EM algorithm given that $y_{obs}=y_1,\dots,y_m$ and $y_{mis}=y_{m+1},\dots,y_{n}$.
 
 \begin{equation}
   \begin{split}
-    L(\beta_0, \beta_1|\boldsymbol{x,y}) &= \prod^{n}_{i=1} \bigg([p_i(\beta_0,\beta_1)]^{y_i}[1-p(\beta_0,\beta_1)]^{1-y_i}\bigg)\\
-    \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y}) &= \prod^{n}_{i=1}\bigg( \frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg)^{y_i} \bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg)^{1-y_i} \\
-    \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y}) &= 
+    L(\beta_0, \beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &= \prod^{n}_{i=1} \bigg([p_i(\beta_0,\beta_1)]^{y_i}[1-p(\beta_0,\beta_1)]^{1-y_i}\bigg)\\
+    \implies L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &= \prod^{n}_{i=1}\bigg( \frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}} \bigg)^{y_i} \bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg)^{1-y_i} \\
+    \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &= \sum^{n}_{i=1} \bigg(y_i\log\bigg(\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg)+(1-y_i)\log\bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg) \bigg)\\
+    \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &=
+    \sum^{n}_{i=1}\bigg(y_i\log(e^{\beta_0+x_i\beta_1})-\log(1+e^{\beta_0+x_i\beta_1})-y_i\log(1+e^{\beta+x_i\beta_1})+y_i\log(1+e^{\beta+x_i\beta_1}) \bigg) \\
+    \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &= \sum^{n}_{i=1} \bigg(y_i(\beta_0+x_i\beta_1)-\log(1+e^{\beta_0+x_i\beta_1}) \bigg) \\
+    &= l(\boldsymbol{\beta}|\boldsymbol{x,y_{obs},y_{mis}})
   \end{split}
 \end{equation}
 
-\newpage
+Now we proceed to implement the EM algorithm by calculating $Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}})$
+\begin{equation}
+  \begin{split}
+    Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}})&=\mathbb{E}_{\boldsymbol{y_{mis}}}
+    [l(\boldsymbol{\beta}|\boldsymbol{x, y_{obs}, y_{mis}})|\boldsymbol{y_{obs}, x, \beta^{(t)}}] \\
+    &=\sum^{m}_{i=1}\bigg(y_i(\beta_0 + x_i\beta_i)\bigg)-\sum^{n}_{i=1}\bigg(\log(1 + e^{\beta_0 + x_i\beta_1})\bigg) + \sum^{n}_{i=m+1}\bigg( (\beta_0+x_i\beta_1) \mathbb{E}_{\boldsymbol{y_{mis}}}[y_i|\boldsymbol{x, y_{obs}, \beta^{(t)}}] \bigg) \\
+    &=\sum^{m}_{i=1}\bigg(y_i(\beta_0+x_i\beta_i)\bigg)-\sum^{n}_{i=1}\bigg(\log(1 + e^{\beta_0 + x_i\beta_1})\bigg) + \sum^{n}_{i=m+1}\bigg( (\beta_0 + x_i\beta_1)p_i(\beta) \bigg) \\
+    &(\mathbb{E}(Y_i)=p_i(\boldsymbol{\beta}) \text{ as } Y_i\sim\text{Bernoulli}(p_i(\boldsymbol{\beta})))
+  \end{split}
+\end{equation}
+
+Next step follow with M-step.
+<!-- \begin{equation} -->
+<!--   \begin{split} -->
+
+<!--   \end{split} -->
+<!-- \end{equation} -->
+<!-- \newpage -->
+
+```{r}
+
+```
+
 
 ## Q5
 
