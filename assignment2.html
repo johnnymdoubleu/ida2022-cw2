@@ -166,6 +166,7 @@ pre code {
 
 <h1 class="title toc-ignore">IDA Assignment 2</h1>
 <h4 class="author">Johnny Lee, s1687781</h4>
+<h4 class="date">25th March 2022</h4>
 
 </div>
 
@@ -393,10 +394,6 @@ summary(mle)</code></pre>
     &amp;(\mathbb{E}(Y_i)=p_i(\boldsymbol{\beta}) \text{ as } Y_i\sim\text{Bernoulli}(p_i(\boldsymbol{\beta})))
   \end{split}
 \end{equation}\]</span></p>
-<p>Next step follow with M-step by computing the partial derivatives. <!-- \begin{equation} --> <!--   \begin{split} --></p>
-<!--   \end{split} -->
-<!-- \end{equation} -->
-<!-- \newpage -->
 <p>In the code, we have used for the stopping criterion as below <span class="math display">\[|p^{(t+1)}-p^{(t)}|+|\beta_0^{(t+1)}-\beta_0^{(t)}|+|\beta_1^{(t+1)}-\beta_1^{(t)}|&lt;\varepsilon\]</span></p>
 <div style="page-break-after: always;"></div>
 </div>
@@ -418,7 +415,7 @@ summary(mle)</code></pre>
 <div id="answer-9" class="section level3">
 <h3><strong>Answer</strong> :</h3>
 <p>Let us consider a mixture model of Log-Normal and Exponential distributions. <span class="math display">\[\mathbb{P}(Y\leq y)=p\cdot\frac{1}{y\sqrt{2\pi\sigma^2}}\text{exp}\left\{\frac{1}{2\sigma^2}(\log y - \mu)^2\right\}+(1-p)\cdot\lambda e^{-\lambda y}\]</span></p>
-<p>Let <span class="math inline">\(z_i\)</span> be binary latent variables indicating component membership, i.e.</p>
+<p>Let <span class="math inline">\(z_i\)</span> be the binary latent variables indicating component membership, i.e.</p>
 <p><span class="math display">\[\begin{equation*}
   z_i=
   \begin{cases}

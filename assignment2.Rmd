@@ -1,6 +1,7 @@
 ---
 title: "IDA Assignment 2"
 author: "Johnny Lee, s1687781"
+date: "25th March 2022"
 output:
   html_document: default
   pdf_document: default
@@ -318,16 +319,9 @@ Now we proceed to implement the EM algorithm by calculating $Q(\boldsymbol{\beta
   \end{split}
 \end{equation}
 
-Next step follow with M-step by computing the partial derivatives.
-<!-- \begin{equation} -->
-<!--   \begin{split} -->
-
-<!--   \end{split} -->
-<!-- \end{equation} -->
-<!-- \newpage -->
 
 In the code, we have used for the stopping criterion as below
-$$|p^{(t+1)}-p^{(t)}|+|\beta_0^{(t+1)}-\beta_0^{(t)}|+|\beta_1^{(t+1)}-\beta_1^{(t)}|<\varepsilon$$
+<!-- $$|p^{(t+1)}-p^{(t)}|+-->$$|\beta_0^{(t+1)}-\beta_0^{(t)}|+|\beta_1^{(t+1)}-\beta_1^{(t)}|<\varepsilon$$ 
 
 ```{r}
 
@@ -395,3 +389,5 @@ the MLEs for each component of $\theta$. As starting values, you might
 want to consider $\theta^{(0)} = (p^{(0)}, \mu^{0)}, (\sigma^{(0)})^2, \lambda^{(0)}) = (0.1, 1, 0.5^2, 2)$. Draw the histogram of the data with the estimated density superimposed.
 
 ### **Answer** :
+
+
