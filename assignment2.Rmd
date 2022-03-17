@@ -318,13 +318,16 @@ Now we proceed to implement the EM algorithm by calculating $Q(\boldsymbol{\beta
   \end{split}
 \end{equation}
 
-Next step follow with M-step.
+Next step follow with M-step by computing the partial derivatives.
 <!-- \begin{equation} -->
 <!--   \begin{split} -->
 
 <!--   \end{split} -->
 <!-- \end{equation} -->
 <!-- \newpage -->
+
+In the code, we have used for the stopping criterion as below
+$$|p^{(t+1)}-p^{(t)}|+|\beta_0^{(t+1)}-\beta_0^{(t)}|+|\beta_1^{(t+1)}-\beta_1^{(t)}|<\varepsilon$$
 
 ```{r}
 
@@ -345,18 +348,38 @@ with \begin{equation*}
   \end{split}
 \end{equation*}
 
-and $\boldsymbol{\theta} = (p, \mu, \sigma^2, \lambda)$ ## a) Derive the
+and $\boldsymbol{\theta} = (p, \mu, \sigma^2, \lambda)$ 
+
+## a) Derive the
 EM algorithm to find the updating equations for
 $\boldsymbol{\theta^{(t+1)}} = (p^{(t+1)}, \mu^{(t+1)}, (\sigma^{(t+1)})^2, \lambda^{(t+1)})$.
 
 ### **Answer** :
 
+Let us consider a mixture model of Log-Normal and Exponential distributions.
+$$\mathbb{P}(Y\leq y)=p\cdot\frac{1}{y\sqrt{2\pi\sigma^2}}\text{exp}\left\{\frac{1}{2\sigma^2}(\log y - \mu)^2\right\}+(1-p)\cdot\lambda e^{-\lambda y}$$
+
+Let $z_i$ be binary latent variables indicating component membership, i.e.
+
+\begin{equation*}
+  z_i=
+  \begin{cases}
+    1 & \text{if } y_i \text{ belong to } f_{\text{LogNormal}}(y;\mu, \sigma^2) \\
+    0 & \text{if } y_i \text{ belong to } f_{\text{Exp}}(y;\lambda)
+  \end{cases}
+\end{equation*}
+
+The observed data in this context is $\boldsymbol{y}=(y_1\dots y_n)$ and the missing data is $\boldsymbol{z}=(z_1\dots z_n)$. The likelihood of the complete data $(\boldsymbol{y,z})$ is
+\begin{equation}
+  \begin{split}
+    
+  \end{split}
+\end{equation}
+
 ## b)
 
 Using the dataset `datasetex5.Rdata` implement the EM algorithm and find
 the MLEs for each component of $\theta$. As starting values, you might
-want to consider
-$\theta^{(0)} = (p^{(0)}, \mu^{0)}, (\sigma^{(0)})^2, \lambda^{(0)}) = (0.1, 1, 0.5^2, 2)$.
-Draw the histogram of the data with the estimated density superimposed.
+want to consider $\theta^{(0)} = (p^{(0)}, \mu^{0)}, (\sigma^{(0)})^2, \lambda^{(0)}) = (0.1, 1, 0.5^2, 2)$. Draw the histogram of the data with the estimated density superimposed.
 
-##\# **Answer** :
+### **Answer** :
