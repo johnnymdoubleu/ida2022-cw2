@@ -249,9 +249,7 @@ pre code {
 <p>Appealing to the asymptotic normality of the maximum likelihood estimator, provide a <span class="math inline">\(95\%\)</span> confidence interval for <span class="math inline">\(\theta\)</span>.</p>
 <div id="answer-2" class="section level3">
 <h3><strong>Answer</strong> :</h3>
-<p>By the Central Limit Theorem, asymptotic normality of the maximum likelihood estimator is given as, <span class="math display">\[
-\sqrt{n}(\hat{\theta}_{MLE}-\theta)\sim N_p(0, I(\theta)^{-1})
-\]</span> Thus, with <span class="math inline">\(0\)</span> and <span class="math inline">\(\frac{1}{I(\theta)}\)</span> as the asymptotic mean and variance respectively, we can obtain the <span class="math inline">\(95\%\)</span> confidence interval as below, <span class="math display">\[\hat{\theta}_{MLE}\pm \frac{1.96}{\sqrt{nI(\theta)}}=\hat{\theta}_{MLE}\pm\frac{1.96\cdot\theta_{MLE}}{\sqrt{n^2(1-e^{-C^2/2\theta_{MLE}})}}\]</span></p>
+<p>By the Central Limit Theorem, asymptotic normality of the maximum likelihood estimator is given as, <!-- $$\sqrt{n}(\hat{\theta}_{MLE}-\theta)\sim N_p(0, I(\theta)^{-1})$$.  --> <span class="math display">\[\hat{\theta}_{MLE}\sim N_p(\theta, I(\theta)^{-1})\]</span> Thus, with <span class="math inline">\(0\)</span> and <span class="math inline">\(\frac{1}{I(\theta)}\)</span> as the asymptotic mean and variance respectively, we can obtain the <span class="math inline">\(95\%\)</span> confidence interval as below, <span class="math display">\[\hat{\theta}_{MLE}\pm \frac{1.96}{\sqrt{I(\theta)}}=\hat{\theta}_{MLE}\pm\frac{1.96\cdot\theta_{MLE}}{\sqrt{n(1-e^{-C^2/2\theta_{MLE}})}}\]</span> <!-- $$\hat{\theta}_{MLE}\pm \frac{1.96}{\sqrt{nI(\theta)}}=\hat{\theta}_{MLE}\pm\frac{1.96\cdot\theta_{MLE}}{\sqrt{n^2(1-e^{-C^2/2\theta_{MLE}})}}$$ --></p>
 <div style="page-break-after: always;"></div>
 </div>
 </div>
@@ -362,7 +360,8 @@ summary(mle)</code></pre>
 <p><span class="math display">\[p_i(\boldsymbol{\beta}) = \frac{exp(\beta_0 + x_i\beta_1)}{1 + exp(\beta_0 + x_i\beta_1)},\]</span> for <span class="math inline">\(i=1,\cdots,n\)</span> and <span class="math inline">\(\boldsymbol{\beta} = (\beta_0, \beta_1)&#39;\)</span>. Although the covariate <span class="math inline">\(x\)</span> is fully observed, the response variable <span class="math inline">\(Y\)</span> has missing values. Assuming ignorability, derive and implement the EM algorithm to compute the MLE of <span class="math inline">\(\boldsymbol{\beta}\)</span> based on the data available in <code>dataex4.Rdata</code>. <strong>Note</strong>: <span class="math inline">\(1\)</span>) For simplicity, and without loss of generality because we have a univariate pattern of missingness, when writing down your expressions, you can assume that the first <span class="math inline">\(m\)</span> values of <span class="math inline">\(Y\)</span> are observed and the remaining <span class="math inline">\(n-m\)</span> are missing. <span class="math inline">\(2\)</span>) You can use a built in function such as <code>optim</code> or the <code>maxLik</code> package for the M-step.</p>
 <div id="answer-8" class="section level3">
 <h3><strong>Answer</strong> :</h3>
-<pre class="r"><code>head(dataex4)</code></pre>
+<pre class="r"><code>load(&quot;dataex4.Rdata&quot;)
+head(dataex4)</code></pre>
 <pre><code>##            X  Y
 ## 1 -0.4689827  1
 ## 2 -0.2557522  1
@@ -385,16 +384,77 @@ summary(mle)</code></pre>
     &amp;= l(\boldsymbol{\beta};\boldsymbol{x,y_{obs},y_{mis}})
   \end{split}
 \end{equation}\]</span></p>
+<p>Then the score function is give by, <span class="math display">\[\begin{equation}
+  \begin{split}
+    U(\beta_0)=\frac{d}{d\beta_0}l(\boldsymbol{\beta};\boldsymbol{x,y_{obs},y_{mis}}) = \sum^{n}_{i}\bigg(y_i-\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg) \\
+    U(\beta_1)=\frac{d}{d\beta_1}l(\boldsymbol{\beta};\boldsymbol{x,y_{obs},y_{mis}}) =
+  \end{split}
+\end{equation}\]</span></p>
 <p>Now we proceed to implement the EM algorithm by calculating <span class="math inline">\(Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}})\)</span> <span class="math display">\[\begin{equation}
   \begin{split}
     Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}})&amp;=\mathbb{E}_{\boldsymbol{y_{mis}}}
     [l(\boldsymbol{\beta};\boldsymbol{x, y_{obs}, y_{mis}})|\boldsymbol{y_{obs}, x, \beta^{(t)}}] \\
-    &amp;=\sum^{m}_{i=1}\bigg(y_i(\beta_0 + x_i\beta_i)\bigg)-\sum^{n}_{i=1}\bigg(\log(1 + e^{\beta_0 + x_i\beta_1})\bigg) + \sum^{n}_{i=m+1}\bigg( (\beta_0+x_i\beta_1) \mathbb{E}_{\boldsymbol{y_{mis}}}[y_i|\boldsymbol{x, y_{obs}, \beta^{(t)}}] \bigg) \\
-    &amp;=\sum^{m}_{i=1}\bigg(y_i(\beta_0+x_i\beta_i)\bigg)-\sum^{n}_{i=1}\bigg(\log(1 + e^{\beta_0 + x_i\beta_1})\bigg) + \sum^{n}_{i=m+1}\bigg( (\beta_0 + x_i\beta_1)p_i(\beta) \bigg) \\
+    &amp;=\sum^{m}_{i=1}\bigg(y_i(\beta_0 + x_i\beta_i)\bigg)-\sum^{m}_{i=1}\bigg(\log(1 + e^{\beta_0 + x_i\beta_1})\bigg) + \sum^{n}_{i=m+1}\bigg( (\beta_0+x_i\beta_1) \mathbb{E}_{\boldsymbol{y_{mis}}}[y_i|\boldsymbol{x, y_{obs}, \beta^{(t)}}] \bigg) \\
+    &amp;=\sum^{m}_{i=1}\bigg(y_i(\beta_0+x_i\beta_i)\bigg)-\sum^{m}_{i=1}\bigg(\log(1 + e^{\beta_0 + x_i\beta_1})\bigg) + \sum^{n}_{i=m+1}\bigg( (\beta_0 + x_i\beta_1)p_i(\beta) \bigg) \\
     &amp;(\mathbb{E}(Y_i)=p_i(\boldsymbol{\beta}) \text{ as } Y_i\sim\text{Bernoulli}(p_i(\boldsymbol{\beta})))
   \end{split}
 \end{equation}\]</span></p>
-<p>In the code, we have used for the stopping criterion as below <span class="math display">\[|p^{(t+1)}-p^{(t)}|+|\beta_0^{(t+1)}-\beta_0^{(t)}|+|\beta_1^{(t+1)}-\beta_1^{(t)}|&lt;\varepsilon\]</span></p>
+<p>Now we differentiate <span class="math inline">\(Q\)</span> with respect to <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> <span class="math display">\[\begin{equation}
+  \begin{split}
+    \frac{d}{d\beta_0}Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}}) &amp;=\sum^{m}_{i=1}\bigg(y_i-\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg) + \sum^{n}_{i=m+1}\bigg(\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}+x_i\beta_1\frac{e^{\beta_0+x_i\beta_1}}{(1+e^{\beta_0+x_i\beta_1})^2}+\beta_0\frac{e^{\beta_0+x_i\beta_1}}{(1+e^{\beta_0+x_i\beta_1})^2} \bigg)\\
+    \frac{d}{d\beta_1}Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}}) &amp;=\sum^{m}_{i=1}\bigg(y_ix_i-x_i\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg) + \sum^{n}_{i=m+1}\bigg(\beta_0\frac{x_ie^{\beta_0+x_i\beta_1}}{(1+e^{\beta_0+x_i\beta_1})^2}+x_i\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}+x_i\beta_1\frac{x_ie^{\beta_0+x_i\beta_1}}{(1+e^{\beta_0+x_i\beta_1})^2} \bigg)\\
+  \end{split}
+\end{equation}\]</span></p>
+<p>The solutions of the derivatives have no closed form expression and thus we need to resort to numerical methods. Before we proceed to the code, we first need to preprocess <code>dataex4</code> by arranging it.</p>
+<pre class="r"><code>dataex4 &lt;- dataex4[order(dataex4$Y),]
+row.names(dataex4) &lt;- NULL
+head(dataex4,5)</code></pre>
+<pre><code>##            X Y
+## 1  0.3215956 0
+## 2  0.2582281 0
+## 3  0.4352370 0
+## 4 -0.2277718 0
+## 5 -0.3193020 0</code></pre>
+<pre class="r"><code>tail(dataex4,5)</code></pre>
+<pre><code>##             X  Y
+## 496 0.6989142 NA
+## 497 0.8936356 NA
+## 498 0.7551561 NA
+## 499 0.8782734 NA
+## 500 0.6924915 NA</code></pre>
+<p>In the code, we have used for the stopping criterion as below <!-- $$|p^{(t+1)}-p^{(t)}|+--><span class="math display">\[|\beta_0^{(t+1)}-\beta_0^{(t)}|+|\beta_1^{(t+1)}-\beta_1^{(t)}|&lt;\varepsilon\]</span></p>
+<pre class="r"><code>log.lik.bernoulli &lt;- function(param, data){
+  beta0 &lt;- param[1]; beta1 &lt;- param[2]
+  x &lt;- data[, 1]; y &lt;- data[, 2]
+  express &lt;- beta0+x[1:405]*beta1
+  express.na &lt;- beta0+x[406:500]*beta1
+  # sum(y[1:405]-(express/(1+express)))+sum((express/(1+express))+x[406:500]*(express/(1+express)^2)+beta0*(express/(1+express)^2))
+  sum(y[1:405]*express-log(1+express)+express.na*express.na/(1+express.na))
+}
+
+mle &lt;- maxLik(logLik = log.lik.bernoulli, data=dataex4, start=c(0, 0))$estimate
+# mle &lt;- optim(c(0, 0), log.lik.bernoulli, data = dataex4, control = list(fnscale = -1), hessian = TRUE)$par
+beta &lt;- c(0,0)
+i &lt;- TRUE
+diff &lt;- 1
+while(diff &gt; 0.00001){
+#     mle &lt;- optim(beta, log.lik.bernoulli, data = dataex4,
+# control = list(fnscale = -1), hessian = TRUE)$par
+    mle &lt;- maxLik(logLik = log.lik.bernoulli, data=dataex4, start = beta)
+    diff &lt;- sum(abs(mle$estimate-beta))
+    print(diff)
+    beta &lt;- mle$estimate
+  # if(diff &gt;0.00001){
+  # 
+  # }
+  # else{
+  #   i==FALSE
+  # }
+}</code></pre>
+<pre><code>## [1] 1.003097
+## [1] 9.224039e-06</code></pre>
+<pre class="r"><code>beta</code></pre>
+<pre><code>## [1] -0.6067501 -0.3963565</code></pre>
 <div style="page-break-after: always;"></div>
 </div>
 <div id="q5" class="section level2">
@@ -426,16 +486,38 @@ summary(mle)</code></pre>
 <p>The observed data in this context is <span class="math inline">\(\boldsymbol{y}=(y_1\dots y_n)\)</span> and the missing data is <span class="math inline">\(\boldsymbol{z}=(z_1\dots z_n)\)</span>. The likelihood of the complete data <span class="math inline">\((\boldsymbol{y,z})\)</span> is <span class="math display">\[\begin{equation}
   \begin{split}
     L(\theta;\boldsymbol{y,z})&amp;=\prod^{n}_{i=1}\bigg(p\cdot\frac{1}{y_i\sqrt{2\pi\sigma^2}}\text{exp}\left\{\frac{1}{2\sigma^2}(\log y_i - \mu)^2\right\}\bigg)^{z_i}\bigg((1-p)\cdot\lambda e^{-\lambda y_i}\bigg)^{1-z_i} \\
-    \implies \log L(\theta;\boldsymbol{y,z})&amp;=\sum^{n}_{i=1}z_i\bigg(p\cdot\frac{1}{y_i\sqrt{2\pi\sigma^2}}\text{exp}\left\{\frac{1}{2\sigma^2}(\log y_i - \mu)^2\right\}\bigg)+\sum^{n}_{i=1}(1-z_i)\bigg((1-p)\cdot\lambda e^{-\lambda y_i}\bigg)
+    \implies \log L(\theta;\boldsymbol{y,z})&amp;=\sum^{n}_{i=1}z_i\log\bigg(p\cdot\frac{1}{y_i\sqrt{2\pi\sigma^2}}\text{exp}\left\{\frac{1}{2\sigma^2}(\log y_i - \mu)^2\right\}\bigg)+\sum^{n}_{i=1}(1-z_i)\log\bigg((1-p)\cdot\lambda e^{-\lambda y_i}\bigg)
   \end{split}
 \end{equation}\]</span></p>
 <p>with the corresponding log likelihood, we proceed to E-Step,</p>
-<p><span class="math display">\[\begin{equation}
+<p><span class="math display">\[\begin{equation}\label{eq:qfn}
   \begin{split}
-    Q(\boldsymbol{\theta};\boldsymbol{\theta^{(t)}})&amp;=\mathbb{E}_{Z}(\log L(\theta;\boldsymbol{y,z})|\boldsymbol{y,\theta^{(t)}})\\
-    &amp;=
+    Q(\boldsymbol{\theta}|\boldsymbol{\theta^{(t)}})&amp;=\mathbb{E}_{Z}(\log L(\theta;\boldsymbol{y,z})|\boldsymbol{y,\theta^{(t)}})\\
+    &amp;=\sum^{n}_{i=1}\mathbb{E}(Z_i|y_i,\theta^{(t)})\log\bigg(p\cdot\frac{1}{y_i\sqrt{2\pi\sigma^2}}\text{exp}\left\{\frac{1}{2\sigma^2}(\log y_i - \mu)^2\right\}\bigg)\\
+    &amp;+\sum^{n}_{i=1}(1-\mathbb{E}(Z_i|y_i,\theta^{(t)}))\log\bigg((1-p)\cdot\lambda e^{-\lambda y_i}\bigg)
   \end{split}
 \end{equation}\]</span></p>
+<p>We know that <span class="math inline">\(\mathbb{E}(Z_i|\boldsymbol{y,\theta^{(t)}})=\mathbb{P}(Z_i=1|y_i,\theta^{(t)})\)</span>, and applying Bayes Theorem and the Law of Total Probability, we obtain,</p>
+<p><span class="math display">\[\begin{equation}\label{eq:sub}
+  \begin{split}
+    \mathbb{E}(Z_i|\boldsymbol{y,\theta^{(t)}})&amp;=\mathbb{P}(Z_i=1|y_i,\theta^{(t)})\\
+    &amp;=\frac{\bigg(p^{(t)}\cdot\frac{1}{y_i\sqrt{2\pi(\sigma^2)^{(t)}}}\text{exp}\left\{\frac{1}{2(\sigma^2)^{(t)}}(\log y_i - \mu^{(t)})^2\right\}\bigg)}{\bigg(p\cdot\frac{1}{y_i\sqrt{2\pi(\sigma^2)^{(t)}}}\text{exp}\left\{\frac{1}{2(\sigma^2)^{(t)}}(\log y_i - \mu^{(t)})^2\right\}\bigg)\bigg((1-p^{(t)})\cdot\lambda^{(t)} e^{-\lambda^{(t)} y_i}\bigg)}\\
+    &amp;= \tilde{p}_i^{(t)}, \quad i=1,\dots,n
+  \end{split}
+\end{equation}\]</span> Therefore, we substitute  into  <span class="math display">\[\begin{equation}
+  \begin{split}
+    Q(\boldsymbol{\theta}|\boldsymbol{\theta^{(t)}})&amp;=\sum^{n}_{i=1}\tilde{p}_i^{(t)}\log\bigg(p\cdot\frac{1}{y_i\sqrt{2\pi\sigma^2}}\text{exp}\left\{\frac{1}{2\sigma^2}(\log y_i - \mu)^2\right\}\bigg)\\
+    &amp;+\sum^{n}_{i=1}(1-\tilde{p}_i^{(t)})\log\bigg((1-p)\cdot\lambda e^{-\lambda y_i}\bigg)
+  \end{split}
+\end{equation}\]</span> For the M-step, we only need to compute the partial derivatives <span class="math display">\[\begin{equation}
+  \begin{split}
+    \frac{\partial}{\partial p} Q(\boldsymbol{\theta}|\boldsymbol{\theta^{(t)}})&amp;=0 \implies p^{(t+1)}=\frac{\sum^{n}_{i=1}\tilde{p}_i^{(t)}}{n}\\
+    \frac{\partial}{\partial \mu} Q(\boldsymbol{\theta}|\boldsymbol{\theta^{(t)}})&amp;=0 \implies \mu^{(t+1)} =\frac{\sum^{n}_{i=1}\tilde{p}_i^{(t)}y_i}{\sum^{n}_{i=1}\tilde{p}_i^{(t)}} \\
+    \frac{\partial}{\partial \sigma^2} Q(\boldsymbol{\theta}|\boldsymbol{\theta^{(t)}})&amp;=0 \implies (\sigma^2)^{(t+1)}=\frac{\sum^{n}_{i=1}\tilde{p}_i^{(t)}y_i(y_i-\mu^{(t)})^2}{\sum^{n}_{i=1}\tilde{p}_i^{(t)}y_i}\\
+    \frac{\partial}{\partial \lambda} Q(\boldsymbol{\theta}|\boldsymbol{\theta^{(t)}})&amp;=0 \implies \lambda^{(t+1)}=\frac{\sum^{n}_{i=1}(1-\tilde{p}_i^{(t)})}{\sum^{n}_{i=1}y_i(1-\tilde{p}_i^{(t)})}
+  \end{split}
+\end{equation}\]</span></p>
+<div style="page-break-after: always;"></div>
 </div>
 </div>
 <div id="b-3" class="section level2">
@@ -443,6 +525,8 @@ summary(mle)</code></pre>
 <p>Using the dataset <code>datasetex5.Rdata</code> implement the EM algorithm and find the MLEs for each component of <span class="math inline">\(\theta\)</span>. As starting values, you might want to consider <span class="math inline">\(\theta^{(0)} = (p^{(0)}, \mu^{0)}, (\sigma^{(0)})^2, \lambda^{(0)}) = (0.1, 1, 0.5^2, 2)\)</span>. Draw the histogram of the data with the estimated density superimposed.</p>
 <div id="answer-10" class="section level3">
 <h3><strong>Answer</strong> :</h3>
+<pre class="r"><code>load(&quot;dataex5.Rdata&quot;)</code></pre>
+<p>In the code, we have used for the stopping criterion <span class="math display">\[|p^{(t+1)}-p^{(t)}|+|\mu^{(t+1)-\mu{(t)}}|+|(\sigma^2)^{(t+1)}-(\sigma^2)^{(t)}|+|\lambda^{(t+1)}-\lambda^{(t)}|&lt;\varepsilon\]</span> with <span class="math inline">\(\varepsilon=0.00001\)</span>. For the starting values we use <span class="math inline">\(\theta^{(0)} = (p^{(0)}, \mu^{0)}, (\sigma^{(0)})^2, \lambda^{(0)}) = (0.1, 1, 0.5^2, 2)\)</span> as given.</p>
 </div>
 </div>
 </div>
