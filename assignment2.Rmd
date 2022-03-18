@@ -52,13 +52,12 @@ we have the likelihood function as,
 \begin{equation}\label{eq:likelihood}
   \begin{split}
     L(\theta|\boldsymbol{y,r})&= \prod^{n}_{i=1} \bigg( [f(y_i;\theta)]^{r_i} [S(C;\theta)]^{1-r_i}\bigg)\\
-    &= \prod^{n}_{i=1} \bigg( [\frac{ye^{-y^2/2\theta}}{\theta}]^{r_i} [e^{-C^2/\theta}]^{1-r_i}\bigg)\\
-    &= \bigg( \frac{y_i}{2\theta}\bigg)^{\sum^{n}_{i=1}r_i}\exp\bigg(\frac{\sum^{n}_{i=1}(r_i y^2_i +(1-r_i)C^2)}{2\theta}\bigg)
+    &= \prod^{n}_{i=1} \bigg( [\frac{y_i e^{-y_i^2/2\theta}}{\theta}]^{r_i} [e^{-C^2/\theta}]^{1-r_i}\bigg)\\
+    &= \bigg(\prod^{n}_{i=1}y_i^{r_i}\bigg)\bigg(\frac{1}{\theta}\bigg)^{\sum^{n}_{i=1}r_i}\exp\bigg(\frac{\sum^{n}_{i=1}(r_i y^2_i +(1-r_i)C^2)}{2\theta}\bigg)
   \end{split}
 \end{equation}
 
-Now we can rewrite the term in the exponential as $X_i$ can we expressed
-as $$x_i=r_iy_i+C(1-r_i)$$ Then by taking square on both sides we have,
+Now we can rewrite the expression inside the exponential in terms of $X_i$. $X_i$ can be expressed as $$x_i=r_iy_i+C(1-r_i)$$ Then by taking square on both sides we have,
 $$x_i^2=r_i^2y_i^2+(1-r_i)^2C^2+2r_iy_iC(1-r_i)$$ Noting that $R_i$ is
 binary, we can then conclude with the expression as
 \begin{equation} \label{eq:x}
@@ -70,8 +69,8 @@ binary, we can then conclude with the expression as
 Now we substitute (\ref{eq:x}) into (\ref{eq:likelihood}) to have,
 \begin{equation}\label{eq:loglik}
   \begin{split}
-    L(\theta|\boldsymbol{y,r}) &= \bigg( \frac{y_i}{2\theta}\bigg)^{\sum^{n}_{i=1}r_i}\exp\bigg(\frac{\sum^{n}_{i=1}x_i}{2\theta}\bigg)\\
-    \implies \log(L(\theta|\boldsymbol{y,r}))&=-\log\theta\sum^{n}_{i=1}r_i-\frac{\sum^{n}_{i=1}x_i^2}{2\theta}\\
+    L(\theta|\boldsymbol{y,r}) &= \bigg(\prod^{n}_{i=1}y_i^{r_i}\bigg)\bigg(\frac{1}{\theta}\bigg)^{\sum^{n}_{i=1}r_i}\exp\bigg(\frac{\sum^{n}_{i=1}(r_i y^2_i +(1-r_i)C^2)}{2\theta}\bigg)\\
+    \implies \log(L(\theta|\boldsymbol{y,r}))&=\sum^{n}_{i=1}r_i\log(y_i)-\log\theta\sum^{n}_{i=1}r_i-\frac{\sum^{n}_{i=1}x_i^2}{2\theta}\\
     \implies \frac{d}{d\theta}\log L(\theta|\boldsymbol{y,r})&=\frac{1}{\theta}\sum^{n}_{i=1}r_i + \frac{1}{2\theta^2}\sum^{n}_{i=1}x_i^2
     \end{split}
 \end{equation} By equating the derivative to $0$, we can obtain the
@@ -196,8 +195,7 @@ we have the likelihood function as,
   \begin{split}
     L(\mu,\sigma^2|\boldsymbol{x,r}) &= \prod^{n}_{i=1}\bigg([\phi(x_i;\mu,\sigma^2)]^{r_i}[\Phi(x_i;\mu,\sigma^2)]^{1-r_i}\bigg)\\
     \implies l(\mu, \sigma^2|\boldsymbol{x}, \boldsymbol{r})&=\log \prod_{i=1}^{n}\bigg(\phi(x_i;\mu,\sigma^2)]^{r_i}[\Phi(x_i;\mu, \sigma^2)]^{1-r_i}\bigg)\\
-    &= \log \bigg([\phi(x_i;\mu,\sigma^2)]^{\sum^{n}_{i=1} r_i}[\Phi(x_i;\mu, \sigma^2)]^{\sum^{n}_{i=1}(1-r_i)}\bigg)\\
-    &=  \sum_{i=1}^n\bigg(r_i\log\phi(x_i; \mu, \sigma^2) + (1-r_i)\log\Phi(x_i;\mu, \sigma^2)\bigg)
+    &=  \sum_{i=1}^n\bigg(r_i\log\phi(x_i; \mu, \sigma^2) + (1-r_i)\log\Phi(x_i;\mu, \sigma^2)\bigg) \quad \text{(shown)}
   \end{split}
 \end{equation}
 
@@ -222,7 +220,7 @@ log.lik <- function(mu, data){
 }
 
 #computing the maximum likelihood estimate of mu
-mle <- maxLik(logLik = log.lik, data = dataex2, start = c(mu = 5))
+mle <- maxLik(logLik = log.lik, data = dataex2, start = c(mu = mean(dataex2$X)))
 summary(mle)
 ```
 
@@ -266,7 +264,7 @@ scalar $\psi$ distinct from $\theta$.
 
 ### **Answer** :
 
-The missing mechanism here is dependent on both $\mu_1$ and $Y_1$. We can observe similarity to (a). Distinctness of the parameters means that the parameter space of $(\theta, \psi)$ is equal to the Cartesian product of their individual product spaces. However, the $\mu_1$ also exists in the parameter space. This violates the ignorability assumption. Hence, (c) is not ignorable for likelihood-based estimation.
+The missing mechanism here is dependent on both $\mu_1$ and $Y_1$ thus **MAR**. We can observe similarity to (a). Distinctness of the parameters means that the parameter space of $(\theta, \psi)$ is equal to the Cartesian product of their individual product spaces. However, the $\mu_1$ also exists in the parameter space. This violates the ignorability assumption. Hence, (c) is not ignorable for likelihood-based estimation.
 
 \newpage
 
@@ -309,26 +307,26 @@ We first derive the likelihood function to implement the EM algorithm given that
   \end{split}
 \end{equation}
 
-Then the score function is give by,
-\begin{equation}
-  \begin{split}
-    U(\beta_0)=\frac{d}{d\beta_0}l(\boldsymbol{\beta};\boldsymbol{x,y_{obs},y_{mis}}) = \sum^{n}_{i}\bigg(y_i-\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg) \\
-    U(\beta_1)=\frac{d}{d\beta_1}l(\boldsymbol{\beta};\boldsymbol{x,y_{obs},y_{mis}}) =
-  \end{split}
-\end{equation}
+<!-- Then the score function is give by, -->
+<!-- \begin{equation} -->
+<!--   \begin{split} -->
+<!--     U(\beta_0)=\frac{d}{d\beta_0}l(\boldsymbol{\beta};\boldsymbol{x,y_{obs},y_{mis}}) = \sum^{n}_{i}\bigg(y_i-\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg) \\ -->
+<!--     U(\beta_1)=\frac{d}{d\beta_1}l(\boldsymbol{\beta};\boldsymbol{x,y_{obs},y_{mis}}) = -->
+<!--   \end{split} -->
+<!-- \end{equation} -->
 
 Now we proceed to implement the EM algorithm by calculating $Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}})$
 \begin{equation}
   \begin{split}
     Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}})&=\mathbb{E}_{\boldsymbol{y_{mis}}}
     [l(\boldsymbol{\beta};\boldsymbol{x, y_{obs}, y_{mis}})|\boldsymbol{y_{obs}, x, \beta^{(t)}}] \\
-    &=\sum^{m}_{i=1}\bigg(y_i(\beta_0 + x_i\beta_i)\bigg)-\sum^{m}_{i=1}\bigg(\log(1 + e^{\beta_0 + x_i\beta_1})\bigg) + \sum^{n}_{i=m+1}\bigg( (\beta_0+x_i\beta_1) \mathbb{E}_{\boldsymbol{y_{mis}}}[y_i|\boldsymbol{x, y_{obs}, \beta^{(t)}}] \bigg) \\
-    &=\sum^{m}_{i=1}\bigg(y_i(\beta_0+x_i\beta_i)\bigg)-\sum^{m}_{i=1}\bigg(\log(1 + e^{\beta_0 + x_i\beta_1})\bigg) + \sum^{n}_{i=m+1}\bigg( (\beta_0 + x_i\beta_1)p_i(\beta) \bigg) \\
+    &=\sum^{m}_{i=1}\bigg(y_i(\beta_0 + x_i\beta_i)\bigg)-\sum^{n}_{i=1}\bigg(\log(1 + e^{\beta_0 + x_i\beta_1})\bigg) + \sum^{n}_{i=m+1}\bigg( (\beta_0+x_i\beta_1) \mathbb{E}_{\boldsymbol{y_{mis}}}[y_i|\boldsymbol{x, y_{obs}, \beta^{(t)}}] \bigg) \\
+    &=\sum^{m}_{i=1}\bigg(y_i(\beta_0+x_i\beta_i)\bigg)-\sum^{n}_{i=1}\bigg(\log(1 + e^{\beta_0 + x_i\beta_1})\bigg) + \sum^{n}_{i=m+1}\bigg( (\beta_0 + x_i\beta_1)p_i(\boldsymbol{\beta}^{(t)}) \bigg) \\
     &(\mathbb{E}(Y_i)=p_i(\boldsymbol{\beta}) \text{ as } Y_i\sim\text{Bernoulli}(p_i(\boldsymbol{\beta})))
   \end{split}
 \end{equation}
 
-Now we differentiate $Q$ with respect to $\beta_0$ and $\beta_1$
+Now we differentiate $Q$ with respect to $\beta_0$ and $\beta_1$ for the M-Step
 \begin{equation}
   \begin{split}
     \frac{d}{d\beta_0}Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}}) &=\sum^{m}_{i=1}\bigg(y_i-\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg) + \sum^{n}_{i=m+1}\bigg(\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}+x_i\beta_1\frac{e^{\beta_0+x_i\beta_1}}{(1+e^{\beta_0+x_i\beta_1})^2}+\beta_0\frac{e^{\beta_0+x_i\beta_1}}{(1+e^{\beta_0+x_i\beta_1})^2} \bigg)\\
@@ -337,49 +335,53 @@ Now we differentiate $Q$ with respect to $\beta_0$ and $\beta_1$
 \end{equation}
 
 The solutions of the derivatives have no closed form expression and thus we need to resort to numerical methods. 
-Before we proceed to the code, we first need to preprocess `dataex4` by arranging it.
+Before we proceed to the code, we first need to preprocess `dataex4` due to the NA values by arranging it.
 ```{r}
+#rearranging the order where the NA values go the last
 dataex4 <- dataex4[order(dataex4$Y),]
 row.names(dataex4) <- NULL
 head(dataex4,5)
 tail(dataex4,5)
 ```
 
-
-In the code, we have used for the stopping criterion as below
+We can confirm that the order of `dataex4` is changed where the `NA` values are at the last.
+Now we proceed to the implementation of the EM algorithm. In the code, we have used for the stopping criterion as below
 <!-- $$|p^{(t+1)}-p^{(t)}|+-->$$|\beta_0^{(t+1)}-\beta_0^{(t)}|+|\beta_1^{(t+1)}-\beta_1^{(t)}|<\varepsilon$$ 
-
 ```{r warning=FALSE}
-log.lik.bernoulli <- function(param, data){
+#function to compute the Q function
+qfn <- function(param, data){
   beta0 <- param[1]; beta1 <- param[2]
   x <- data[, 1]; y <- data[, 2]
-  express <- beta0+x[1:405]*beta1
-  express.na <- beta0+x[406:500]*beta1
-  # sum(y[1:405]-(express/(1+express)))+sum((express/(1+express))+x[406:500]*(express/(1+express)^2)+beta0*(express/(1+express)^2))
-  sum(y[1:405]*express-log(1+express)+express.na*express.na/(1+express.na))
+  express <- beta0 + x[1:405]*beta1
+  express.na <- beta[1] + x[406:500]*beta[2]
+  express.all <- beta0 + x*beta1
+  express.fix <- beta0 + x[406:500]*beta1
+  sum(y[1:405]*express) - sum(log(1 + exp(express.all))) +
+    sum(express.fix*exp(express.na)/(1 + exp(express.na)))
 }
 
-mle <- maxLik(logLik = log.lik.bernoulli, data=dataex4, start=c(0, 0))$estimate
-# mle <- optim(c(0, 0), log.lik.bernoulli, data = dataex4, control = list(fnscale = -1), hessian = TRUE)$par
+#using maxlik
 beta <- c(0,0)
-i <- TRUE
 diff <- 1
-while(diff > 0.00001){
-#     mle <- optim(beta, log.lik.bernoulli, data = dataex4,
-# control = list(fnscale = -1), hessian = TRUE)$par
-    mle <- maxLik(logLik = log.lik.bernoulli, data=dataex4, start = beta)
-    diff <- sum(abs(mle$estimate-beta))
-    print(diff)
+while(diff > 0.000001){
+    mle <- maxLik(logLik = qfn, data = dataex4, start = beta)
+    diff <- sum(abs(mle$estimate - beta))
     beta <- mle$estimate
-  # if(diff >0.00001){
-  # 
-  # }
-  # else{
-  #   i==FALSE
-  # }
 }
-beta
+cat("The value for beta0:", beta[1], "\n",
+    "The value for beta1:", beta[2])
 
+#using optim
+beta <- c(0,0)
+diff <- 1
+while(diff > 0.000001){
+    mle <- optim(beta, qfn, data = dataex4,
+                 control = list(fnscale = -1), hessian = TRUE)
+    diff <- sum(abs(mle$par - beta))
+    beta <- mle$par
+}
+cat("The value for beta0:", beta[1], "\n",
+    "The value for beta1:", beta[2])
 ```
 
 
@@ -420,14 +422,14 @@ Let $z_i$ be the binary latent variables indicating component membership, i.e.
 \end{equation*}
 
 The observed data in this context is $\boldsymbol{y}=(y_1\dots y_n)$ and the missing data is $\boldsymbol{z}=(z_1\dots z_n)$. The likelihood of the complete data $(\boldsymbol{y,z})$ is
-\begin{equation}
+\begin{equation}\label{eq:mixloglik}
   \begin{split}
     L(\theta;\boldsymbol{y,z})&=\prod^{n}_{i=1}\bigg(p\cdot\frac{1}{y_i\sqrt{2\pi\sigma^2}}\text{exp}\left\{\frac{1}{2\sigma^2}(\log y_i - \mu)^2\right\}\bigg)^{z_i}\bigg((1-p)\cdot\lambda e^{-\lambda y_i}\bigg)^{1-z_i} \\
     \implies \log L(\theta;\boldsymbol{y,z})&=\sum^{n}_{i=1}z_i\log\bigg(p\cdot\frac{1}{y_i\sqrt{2\pi\sigma^2}}\text{exp}\left\{\frac{1}{2\sigma^2}(\log y_i - \mu)^2\right\}\bigg)+\sum^{n}_{i=1}(1-z_i)\log\bigg((1-p)\cdot\lambda e^{-\lambda y_i}\bigg)
   \end{split}
 \end{equation}
 
-with the corresponding log likelihood, we proceed to E-Step,
+with the corresponding log likelihood (\ref{eq:mixloglik}), we proceed to E-Step,
 
 \begin{equation}\label{eq:qfn}
   \begin{split}
@@ -457,8 +459,8 @@ For the M-step, we only need to compute the partial derivatives
 \begin{equation}
   \begin{split}
     \frac{\partial}{\partial p} Q(\boldsymbol{\theta}|\boldsymbol{\theta^{(t)}})&=0 \implies p^{(t+1)}=\frac{\sum^{n}_{i=1}\tilde{p}_i^{(t)}}{n}\\
-    \frac{\partial}{\partial \mu} Q(\boldsymbol{\theta}|\boldsymbol{\theta^{(t)}})&=0 \implies \mu^{(t+1)} =\frac{\sum^{n}_{i=1}\tilde{p}_i^{(t)}y_i}{\sum^{n}_{i=1}\tilde{p}_i^{(t)}} \\
-    \frac{\partial}{\partial \sigma^2} Q(\boldsymbol{\theta}|\boldsymbol{\theta^{(t)}})&=0 \implies (\sigma^2)^{(t+1)}=\frac{\sum^{n}_{i=1}\tilde{p}_i^{(t)}y_i(y_i-\mu^{(t)})^2}{\sum^{n}_{i=1}\tilde{p}_i^{(t)}y_i}\\
+    \frac{\partial}{\partial \mu} Q(\boldsymbol{\theta}|\boldsymbol{\theta^{(t)}})&=0 \implies \mu^{(t+1)} =\frac{\sum^{n}_{i=1}\tilde{p}_i^{(t)}\log(y_i)}{\sum^{n}_{i=1}\tilde{p}_i^{(t)}} \\
+    \frac{\partial}{\partial \sigma^2} Q(\boldsymbol{\theta}|\boldsymbol{\theta^{(t)}})&=0 \implies (\sigma^{(t+1)})^2=\frac{\sum^{n}_{i=1}\tilde{p}_i^{(t)}(\log(y_i)-\mu^{(t+1)})^2}{\sum^{n}_{i=1}\tilde{p}_i^{(t)}y_i}\\
     \frac{\partial}{\partial \lambda} Q(\boldsymbol{\theta}|\boldsymbol{\theta^{(t)}})&=0 \implies \lambda^{(t+1)}=\frac{\sum^{n}_{i=1}(1-\tilde{p}_i^{(t)})}{\sum^{n}_{i=1}y_i(1-\tilde{p}_i^{(t)})}
   \end{split}
 \end{equation}
@@ -478,7 +480,49 @@ load("dataex5.Rdata")
 ```
 
 In the code, we have used for the stopping criterion
-$$|p^{(t+1)}-p^{(t)}|+|\mu^{(t+1)-\mu{(t)}}|+|(\sigma^2)^{(t+1)}-(\sigma^2)^{(t)}|+|\lambda^{(t+1)}-\lambda^{(t)}|<\varepsilon$$
+$$|p^{(t+1)}-p^{(t)}|+|\mu^{(t+1)-\mu{(t)}}|+|(\sigma^{(t+1)})^2-(\sigma^{(t)})^2|+|\lambda^{(t+1)}-\lambda^{(t)}|<\varepsilon$$
 with $\varepsilon=0.00001$. For the starting values we use $\theta^{(0)} = (p^{(0)}, \mu^{0)}, (\sigma^{(0)})^2, \lambda^{(0)}) = (0.1, 1, 0.5^2, 2)$ as given.
 
+
+```{r}
+mixture.model <- function(y, theta, eps){
+  n <- length(y)
+  #initialising the parameters
+  p <- theta[1]; mu <- theta[2]; sigma <- theta[3]; lambda <- theta[4]
+  diff <- 1
+  while(diff > eps){
+  theta.old <- theta
+  #E-step: computing ptilde
+  ptilde1 <- p*dlnorm(y, mean = mu, sd = sigma)
+  ptilde2 <- (1 - p)*dexp(y, lambda)
+  ptilde <- ptilde1/(ptilde1 + ptilde2)
+  
+  #M-step: computing each parameter
+  p <- mean(ptilde)
+  mu <- sum(log(y)*ptilde)/sum(ptilde)
+  sigma <- sqrt(sum(((log(y) - mu)^2)*ptilde)/sum(ptilde))
+  lambda <- sum(1 - ptilde)/sum(y*(1 - ptilde))
+  
+  #Checking with stopping criterion
+  theta <- c(p, mu, sigma, lambda)
+  diff <- sum(abs(theta - theta.old))
+  }
+  return(theta)
+}
+#Performing the EM algorithm on Mixture Model
+res <- mixture.model(y = dataex5, c(0.1, 1, 0.5, 2), 0.000001)
+p <- res[1]; mu <- res[2]; sigma <- res[3]; lambda <- res[4]
+cat("The value for p is", p)
+cat("The value for mu is", mu)
+cat("The value for sigma^2 is", sigma)
+cat("The value for lambda is", lambda)
+```
+
+```{r}
+#plotting the histogram of the mixture model
+hist(dataex5, breaks=45, main = "Mixture Model of Log-Normal & exp", 
+     xlab = "y", ylab = "density", ylim = c(0,0.2),
+     cex.main = 1.5, cex.lab = 1.5, cex.axis = 1.4, freq = F)
+curve(p*dlnorm(x, mu, sigma)+(1-p)*dexp(x, lambda), add = TRUE, lwd = 2, col = "red")
+```
 
