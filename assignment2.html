@@ -209,7 +209,7 @@ pre code {
     \implies \log(L(\theta|\boldsymbol{y,r}))&amp;=\sum^{n}_{i=1}r_i\log(y_i)-\log\theta\sum^{n}_{i=1}r_i-\frac{\sum^{n}_{i=1}x_i^2}{2\theta}\\
     \implies \frac{d}{d\theta}\log L(\theta|\boldsymbol{y,r})&amp;=\frac{1}{\theta}\sum^{n}_{i=1}r_i + \frac{1}{2\theta^2}\sum^{n}_{i=1}x_i^2
     \end{split}
-\end{equation}\]</span> By equating the derivative to <span class="math inline">\(0\)</span>, we can obtain the maximum likelihood estimate of <span class="math inline">\(\theta\)</span> as below. <span class="math display">\[\hat{\theta}_{MLE} = \frac{\sum_{i=1}^n x_i^2}{2\sum_{i=1}^nr_i} \quad \text{(shown)}\]</span>.</p>
+\end{equation}\]</span> By equating the derivative () to <span class="math inline">\(0\)</span>, we can obtain the maximum likelihood estimate of <span class="math inline">\(\theta\)</span> as below. <span class="math display">\[\hat{\theta}_{MLE} = \frac{\sum_{i=1}^n x_i^2}{2\sum_{i=1}^nr_i} \quad \text{(shown)}\]</span>.</p>
 <div style="page-break-after: always;"></div>
 </div>
 </div>
@@ -221,22 +221,23 @@ pre code {
 <h3><strong>Answer</strong> :</h3>
 <p>From (), we take another derivative of it and thus obtain as below <span class="math display">\[\frac{d^2}{d\theta^2}\log L(\theta)=\frac{1}{\theta^2}\sum^{n}_{i=1}r_i-\frac{x_i^2}{\theta^3}\]</span> Then, the Fisher Information for the observed data likelihood is, <span class="math display">\[\begin{equation}\label{eq:fi}
   \begin{split}
-    I(\theta|\boldsymbol{x,r})&amp;=-\mathbb{E}\bigg(\frac{\sum^{n}_{i=1}r_i}{\theta^2}-\frac{x^2_i}{\theta^3}\bigg)\\
+    I(\theta)&amp;=-\mathbb{E}\bigg(\frac{\sum^{n}_{i=1}r_i}{\theta^2}-\frac{x^2_i}{\theta^3}\bigg)\\
     &amp;=-\frac{n\mathbb{E}(R)}{\theta^2}+\frac{n\mathbb{E}(X^2)}{\theta^3}\\
-    I(\theta|\boldsymbol{y,r})&amp;=-\frac{n\mathbb{E}(R)}{\theta^2}+\frac{1}{\theta^3}\bigg(n\mathbb{E}(RY^2)+nC^2\mathbb{E}(1-R)\bigg)
+    &amp;=-\frac{n\mathbb{E}(R)}{\theta^2}+\frac{1}{\theta^3}\bigg(n\mathbb{E}(RY^2)+nC^2\mathbb{E}(1-R)\bigg)
   \end{split}
 \end{equation}\]</span></p>
 <p>Again, noting that <span class="math inline">\(R_i\)</span> is binary, <span class="math display">\[\begin{equation}\label{eq:expR}
   \begin{split}
     \mathbb{E}(R)&amp;=1\cdot\mathbb{P}(R=1)+0\cdot\mathbb{P}(R=0)\\
     &amp;=\mathbb{P}(R=1)=\mathbb{P}(Y\leq C)\\
-    &amp;=F(C;\theta) = 1-e^{-C^2/2\theta}
+    &amp;=F(C;\theta) = 1-e^{-C^2/2\theta} \\
+    \implies \mathbb{E}(1-R)&amp;=e^{-C^2/2\theta}
   \end{split}
 \end{equation}\]</span></p>
 <p>With the given equation, <span class="math inline">\(\mathbb{E}(RY^2)=\int_0^Cy^2f(y;\theta)dy = -C^2e^{-C^2/(2\theta)} + 2\theta(1 - e^{-C^2 / (2\theta)})\)</span>, we can combine all the above equations as express the expected Fisher Information again,</p>
 <p><span class="math display">\[\begin{equation}
   \begin{split}
-    I(\theta|\boldsymbol{y,r})&amp;=\frac{n\mathbb{E}(R)}{\theta^2}+\frac{1}{\theta^3}\bigg(n\mathbb{E}(RY^2)+nC^2\mathbb{E}(1-R)\bigg)\\
+    I(\theta)&amp;=\frac{n\mathbb{E}(R)}{\theta^2}+\frac{1}{\theta^3}\bigg(n\mathbb{E}(RY^2)+nC^2\mathbb{E}(1-R)\bigg)\\
     &amp;=\frac{-n}{\theta^2}(1-e^{-C^2/2\theta})-\frac{n}{\theta^3}(C^2e^{-C^2/2\theta})+\frac{n}{\theta^3}(2\theta(1-e^{-C^2/2\theta}))+\frac{n}{\theta^3}(C^2e^{-C^2/2\theta}) \\
     &amp;=\frac{n}{\theta^2}(1-e^{-C^2/2\theta}) \quad \text{(shown)}
   \end{split}
@@ -340,7 +341,7 @@ summary(mle)</code></pre>
 <p><span class="math inline">\(\text{logit}\{\mathbb{P}(R=0|y_1,y_2,\theta,\psi)\}=\psi_0+\psi_1y_2, \quad \psi= (\psi_0,\psi_1)\)</span> distinct from <span class="math inline">\(\theta\)</span>.</p>
 <div id="answer-6" class="section level3">
 <h3><strong>Answer</strong> :</h3>
-<p>The missing mechanism is <strong>MNAR</strong> as the mechanism is only dependent on <span class="math inline">\(Y_2\)</span>. Therefore, the missing value is depending on itself and possibly other factors. Therefore, by referring to the ignorability assumption (from <strong>Lecture 6.1</strong>), we conclude that (b) is not ignorable for likelihood-based estimation.</p>
+<p>The missing mechanism is <strong>MNAR</strong> as the mechanism is only dependent on <span class="math inline">\(Y_2\)</span>. Therefore, the missing value is depending on itself and possibly other factors. Hence, by referring to the ignorability assumption (from <strong>Lecture 6.1</strong>), we conclude that (b) is not ignorable for likelihood-based estimation.</p>
 </div>
 <div id="c-1" class="section level3">
 <h3>c)</h3>
@@ -374,26 +375,19 @@ head(dataex4)</code></pre>
 <p>We first derive the likelihood function to implement the EM algorithm given that <span class="math inline">\(y_{obs}=y_1,\dots,y_m\)</span> and <span class="math inline">\(y_{mis}=y_{m+1},\dots,y_{n}\)</span>.</p>
 <p><span class="math display">\[\begin{equation}
   \begin{split}
-    L(\beta_0, \beta_1;\boldsymbol{x,y_{obs},y_{mis}}) &amp;= \prod^{n}_{i=1} \bigg([p_i(\beta_0,\beta_1)]^{y_i}[1-p(\beta_0,\beta_1)]^{1-y_i}\bigg)\\
-    \implies L(\beta_0,\beta_1;\boldsymbol{x,y_{obs},y_{mis}}) &amp;= \prod^{n}_{i=1}\bigg( \frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}} \bigg)^{y_i} \bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg)^{1-y_i} \\
-    \implies \log L(\beta_0,\beta_1;\boldsymbol{x,y_{obs},y_{mis}}) &amp;= \sum^{n}_{i=1} \bigg(y_i\log\bigg(\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg)+(1-y_i)\log\bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg) \bigg)\\
-    \implies \log L(\beta_0,\beta_1;\boldsymbol{x,y_{obs},y_{mis}}) &amp;=
+    L(\beta_0, \beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &amp;= \prod^{n}_{i=1} \bigg([p_i(\beta_0,\beta_1)]^{y_i}[1-p(\beta_0,\beta_1)]^{1-y_i}\bigg)\\
+    \implies L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &amp;= \prod^{n}_{i=1}\bigg( \frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}} \bigg)^{y_i} \bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg)^{1-y_i} \\
+    \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &amp;= \sum^{n}_{i=1} \bigg(y_i\log\bigg(\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg)+(1-y_i)\log\bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg) \bigg)\\
+    \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &amp;=
     \sum^{n}_{i=1}\bigg(y_i\log(e^{\beta_0+x_i\beta_1})-\log(1+e^{\beta_0+x_i\beta_1})-y_i\log(1+e^{\beta+x_i\beta_1})+y_i\log(1+e^{\beta+x_i\beta_1}) \bigg) \\
-    \implies \log L(\beta_0,\beta_1;\boldsymbol{x,y_{obs},y_{mis}}) &amp;= \sum^{n}_{i=1} \bigg(y_i(\beta_0+x_i\beta_1)-\log(1+e^{\beta_0+x_i\beta_1}) \bigg) \\
-    &amp;= l(\boldsymbol{\beta};\boldsymbol{x,y_{obs},y_{mis}})
+    \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &amp;= \sum^{n}_{i=1} \bigg(y_i(\beta_0+x_i\beta_1)-\log(1+e^{\beta_0+x_i\beta_1}) \bigg) \\
+    &amp;= l(\boldsymbol{\beta}|\boldsymbol{x,y_{obs},y_{mis}})
   \end{split}
 \end{equation}\]</span></p>
-<!-- Then the score function is give by, -->
-<!-- \begin{equation} -->
-<!--   \begin{split} -->
-<!--     U(\beta_0)=\frac{d}{d\beta_0}l(\boldsymbol{\beta};\boldsymbol{x,y_{obs},y_{mis}}) = \sum^{n}_{i}\bigg(y_i-\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg) \\ -->
-<!--     U(\beta_1)=\frac{d}{d\beta_1}l(\boldsymbol{\beta};\boldsymbol{x,y_{obs},y_{mis}}) = -->
-<!--   \end{split} -->
-<!-- \end{equation} -->
 <p>Now we proceed to implement the EM algorithm by calculating <span class="math inline">\(Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}})\)</span> <span class="math display">\[\begin{equation}
   \begin{split}
     Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}})&amp;=\mathbb{E}_{\boldsymbol{y_{mis}}}
-    [l(\boldsymbol{\beta};\boldsymbol{x, y_{obs}, y_{mis}})|\boldsymbol{y_{obs}, x, \beta^{(t)}}] \\
+    [l(\boldsymbol{\beta}|\boldsymbol{x, y_{obs}, y_{mis}})|\boldsymbol{y_{obs}, x, \beta^{(t)}}] \\
     &amp;=\sum^{m}_{i=1}\bigg(y_i(\beta_0 + x_i\beta_i)\bigg)-\sum^{n}_{i=1}\bigg(\log(1 + e^{\beta_0 + x_i\beta_1})\bigg) + \sum^{n}_{i=m+1}\bigg( (\beta_0+x_i\beta_1) \mathbb{E}_{\boldsymbol{y_{mis}}}[y_i|\boldsymbol{x, y_{obs}, \beta^{(t)}}] \bigg) \\
     &amp;=\sum^{m}_{i=1}\bigg(y_i(\beta_0+x_i\beta_i)\bigg)-\sum^{n}_{i=1}\bigg(\log(1 + e^{\beta_0 + x_i\beta_1})\bigg) + \sum^{n}_{i=m+1}\bigg( (\beta_0 + x_i\beta_1)p_i(\boldsymbol{\beta}^{(t)}) \bigg) \\
     &amp;(\mathbb{E}(Y_i)=p_i(\boldsymbol{\beta}) \text{ as } Y_i\sim\text{Bernoulli}(p_i(\boldsymbol{\beta})))
@@ -405,7 +399,7 @@ head(dataex4)</code></pre>
     \frac{d}{d\beta_1}Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}}) &amp;=\sum^{m}_{i=1}\bigg(y_ix_i-x_i\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg) + \sum^{n}_{i=m+1}\bigg(\beta_0\frac{x_ie^{\beta_0+x_i\beta_1}}{(1+e^{\beta_0+x_i\beta_1})^2}+x_i\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}+x_i\beta_1\frac{x_ie^{\beta_0+x_i\beta_1}}{(1+e^{\beta_0+x_i\beta_1})^2} \bigg)\\
   \end{split}
 \end{equation}\]</span></p>
-<p>The solutions of the derivatives have no closed form expression and thus we need to resort to numerical methods. Before we proceed to the code, we first need to preprocess <code>dataex4</code> due to the NA values by arranging it.</p>
+<p>However, the solutions of the derivatives have no closed form expressions and thus we need to resort to numerical methods. Before proceeding to the implementation, we first need to preprocess <code>dataex4</code> due to the <code>NA</code> values by rearranging it.</p>
 <pre class="r"><code>#rearranging the order where the NA values go the last
 dataex4 &lt;- dataex4[order(dataex4$Y),]
 row.names(dataex4) &lt;- NULL
@@ -432,6 +426,7 @@ qfn &lt;- function(param, data){
   express.na &lt;- beta[1] + x[406:500]*beta[2]
   express.all &lt;- beta0 + x*beta1
   express.fix &lt;- beta0 + x[406:500]*beta1
+  #expression of the Q function
   sum(y[1:405]*express) - sum(log(1 + exp(express.all))) +
     sum(express.fix*exp(express.na)/(1 + exp(express.na)))
 }
@@ -461,6 +456,7 @@ cat(&quot;The value for beta0:&quot;, beta[1], &quot;\n&quot;,
     &quot;The value for beta1:&quot;, beta[2])</code></pre>
 <pre><code>## The value for beta0: 0.9757079 
 ##  The value for beta1: -2.479987</code></pre>
+<p>Using two different methods, <code>maxLik()</code> and <code>optim()</code>, we can see that we both obtained similar results with a small(<span class="math inline">\(0.001\)</span>) difference. Thus, we conclude that the MLE of <span class="math inline">\(\beta=(\beta_0,\beta_1)\)</span> is <span class="math inline">\((0.976, -2.48)\)</span></p>
 <div style="page-break-after: always;"></div>
 </div>
 <div id="q5" class="section level2">

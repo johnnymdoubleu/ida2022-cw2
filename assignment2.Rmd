@@ -3,8 +3,8 @@ title: "IDA Assignment 2"
 author: "Johnny Lee, s1687781"
 date: "25th March 2022"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -257,7 +257,7 @@ distinct from $\theta$.
 
 ### **Answer** :
 
-The missing mechanism is **MNAR** as the mechanism is only dependent on $Y_2$. Therefore, the missing value is depending on itself and possibly other factors. Therefore, by referring to the ignorability assumption (from **Lecture 6.1**), we conclude that (b) is not ignorable for likelihood-based estimation.
+The missing mechanism is **MNAR** as the mechanism is only dependent on $Y_2$. Therefore, the missing value is depending on itself and possibly other factors. Hence, by referring to the ignorability assumption (from **Lecture 6.1**), we conclude that (b) is not ignorable for likelihood-based estimation.
 
 ### c)
 
