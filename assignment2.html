@@ -360,8 +360,7 @@ summary(mle)</code></pre>
 <p><span class="math display">\[p_i(\boldsymbol{\beta}) = \frac{exp(\beta_0 + x_i\beta_1)}{1 + exp(\beta_0 + x_i\beta_1)},\]</span> for <span class="math inline">\(i=1,\cdots,n\)</span> and <span class="math inline">\(\boldsymbol{\beta} = (\beta_0, \beta_1)&#39;\)</span>. Although the covariate <span class="math inline">\(x\)</span> is fully observed, the response variable <span class="math inline">\(Y\)</span> has missing values. Assuming ignorability, derive and implement the EM algorithm to compute the MLE of <span class="math inline">\(\boldsymbol{\beta}\)</span> based on the data available in <code>dataex4.Rdata</code>. <strong>Note</strong>: <span class="math inline">\(1\)</span>) For simplicity, and without loss of generality because we have a univariate pattern of missingness, when writing down your expressions, you can assume that the first <span class="math inline">\(m\)</span> values of <span class="math inline">\(Y\)</span> are observed and the remaining <span class="math inline">\(n-m\)</span> are missing. <span class="math inline">\(2\)</span>) You can use a built in function such as <code>optim</code> or the <code>maxLik</code> package for the M-step.</p>
 <div id="answer-8" class="section level3">
 <h3><strong>Answer</strong> :</h3>
-<pre class="r"><code>load(&quot;dataex4.Rdata&quot;)
-head(dataex4)</code></pre>
+<pre class="r"><code>head(dataex4)</code></pre>
 <pre><code>##            X  Y
 ## 1 -0.4689827  1
 ## 2 -0.2557522  1
@@ -527,7 +526,6 @@ cat(&quot;The value for beta0:&quot;, beta[1], &quot;\n&quot;,
 <p>Using the dataset <code>datasetex5.Rdata</code> implement the EM algorithm and find the MLEs for each component of <span class="math inline">\(\theta\)</span>. As starting values, you might want to consider <span class="math inline">\(\theta^{(0)} = (p^{(0)}, \mu^{0)}, (\sigma^{(0)})^2, \lambda^{(0)}) = (0.1, 1, 0.5^2, 2)\)</span>. Draw the histogram of the data with the estimated density superimposed.</p>
 <div id="answer-10" class="section level3">
 <h3><strong>Answer</strong> :</h3>
-<pre class="r"><code>load(&quot;dataex5.Rdata&quot;)</code></pre>
 <p>In the code, we have used for the stopping criterion <span class="math display">\[|p^{(t+1)}-p^{(t)}|+|\mu^{(t+1)-\mu{(t)}}|+|(\sigma^{(t+1)})^2-(\sigma^{(t)})^2|+|\lambda^{(t+1)}-\lambda^{(t)}|&lt;\varepsilon\]</span> with <span class="math inline">\(\varepsilon=0.00001\)</span>. For the starting values we use <span class="math inline">\(\theta^{(0)} = (p^{(0)}, \mu^{0)}, (\sigma^{(0)})^2, \lambda^{(0)}) = (0.1, 1, 0.5^2, 2)\)</span> as given.</p>
 <pre class="r"><code>mixture.model &lt;- function(y, theta, eps){
   n &lt;- length(y)

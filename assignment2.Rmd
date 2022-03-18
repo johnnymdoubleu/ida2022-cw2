@@ -12,6 +12,8 @@ knitr::opts_chunk$set(echo = TRUE)
 Sys.setlocale("LC_ALL", "English")
 library(maxLik)
 load("dataex2.Rdata")
+load("dataex4.Rdata")
+load("dataex5.Rdata")
 ```
 
 # Q1.
@@ -289,7 +291,6 @@ the M-step.
 ### **Answer** :
 
 ```{r}
-load("dataex4.Rdata")
 head(dataex4)
 cat("Number of missing values in Y:", sum(is.na(dataex4)))
 ```
@@ -468,10 +469,6 @@ the MLEs for each component of $\theta$. As starting values, you might
 want to consider $\theta^{(0)} = (p^{(0)}, \mu^{0)}, (\sigma^{(0)})^2, \lambda^{(0)}) = (0.1, 1, 0.5^2, 2)$. Draw the histogram of the data with the estimated density superimposed.
 
 ### **Answer** :
-
-```{r}
-load("dataex5.Rdata")
-```
 
 In the code, we have used for the stopping criterion
 $$|p^{(t+1)}-p^{(t)}|+|\mu^{(t+1)-\mu{(t)}}|+|(\sigma^{(t+1)})^2-(\sigma^{(t)})^2|+|\lambda^{(t+1)}-\lambda^{(t)}|<\varepsilon$$
