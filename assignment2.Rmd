@@ -73,7 +73,8 @@ Now we substitute (\ref{eq:x}) into (\ref{eq:likelihood}) to have,
     \implies \log(L(\theta|\boldsymbol{y,r}))&=\sum^{n}_{i=1}r_i\log(y_i)-\log\theta\sum^{n}_{i=1}r_i-\frac{\sum^{n}_{i=1}x_i^2}{2\theta}\\
     \implies \frac{d}{d\theta}\log L(\theta|\boldsymbol{y,r})&=\frac{1}{\theta}\sum^{n}_{i=1}r_i + \frac{1}{2\theta^2}\sum^{n}_{i=1}x_i^2
     \end{split}
-\end{equation} By equating the derivative to $0$, we can obtain the
+\end{equation} 
+By equating the derivative (\ref{eq:loglik}) to $0$, we can obtain the
 maximum likelihood estimate of $\theta$ as below.
 $$\hat{\theta}_{MLE} = \frac{\sum_{i=1}^n x_i^2}{2\sum_{i=1}^nr_i} \quad \text{(shown)}$$.
 
@@ -97,9 +98,9 @@ $$\frac{d^2}{d\theta^2}\log L(\theta)=\frac{1}{\theta^2}\sum^{n}_{i=1}r_i-\frac{
 Then, the Fisher Information for the observed data likelihood is,
 \begin{equation}\label{eq:fi}
   \begin{split}
-    I(\theta|\boldsymbol{x,r})&=-\mathbb{E}\bigg(\frac{\sum^{n}_{i=1}r_i}{\theta^2}-\frac{x^2_i}{\theta^3}\bigg)\\
+    I(\theta)&=-\mathbb{E}\bigg(\frac{\sum^{n}_{i=1}r_i}{\theta^2}-\frac{x^2_i}{\theta^3}\bigg)\\
     &=-\frac{n\mathbb{E}(R)}{\theta^2}+\frac{n\mathbb{E}(X^2)}{\theta^3}\\
-    I(\theta|\boldsymbol{y,r})&=-\frac{n\mathbb{E}(R)}{\theta^2}+\frac{1}{\theta^3}\bigg(n\mathbb{E}(RY^2)+nC^2\mathbb{E}(1-R)\bigg)
+    &=-\frac{n\mathbb{E}(R)}{\theta^2}+\frac{1}{\theta^3}\bigg(n\mathbb{E}(RY^2)+nC^2\mathbb{E}(1-R)\bigg)
   \end{split}
 \end{equation}
 
@@ -107,7 +108,8 @@ Again, noting that $R_i$ is binary, \begin{equation}\label{eq:expR}
   \begin{split}
     \mathbb{E}(R)&=1\cdot\mathbb{P}(R=1)+0\cdot\mathbb{P}(R=0)\\
     &=\mathbb{P}(R=1)=\mathbb{P}(Y\leq C)\\
-    &=F(C;\theta) = 1-e^{-C^2/2\theta}
+    &=F(C;\theta) = 1-e^{-C^2/2\theta} \\
+    \implies \mathbb{E}(1-R)&=e^{-C^2/2\theta}
   \end{split}
 \end{equation}
 
@@ -118,7 +120,7 @@ Information again,
 
 \begin{equation}
   \begin{split}
-    I(\theta|\boldsymbol{y,r})&=\frac{n\mathbb{E}(R)}{\theta^2}+\frac{1}{\theta^3}\bigg(n\mathbb{E}(RY^2)+nC^2\mathbb{E}(1-R)\bigg)\\
+    I(\theta)&=\frac{n\mathbb{E}(R)}{\theta^2}+\frac{1}{\theta^3}\bigg(n\mathbb{E}(RY^2)+nC^2\mathbb{E}(1-R)\bigg)\\
     &=\frac{-n}{\theta^2}(1-e^{-C^2/2\theta})-\frac{n}{\theta^3}(C^2e^{-C^2/2\theta})+\frac{n}{\theta^3}(2\theta(1-e^{-C^2/2\theta}))+\frac{n}{\theta^3}(C^2e^{-C^2/2\theta}) \\
     &=\frac{n}{\theta^2}(1-e^{-C^2/2\theta}) \quad \text{(shown)}
   \end{split}
@@ -297,29 +299,21 @@ We first derive the likelihood function to implement the EM algorithm given that
 
 \begin{equation}
   \begin{split}
-    L(\beta_0, \beta_1;\boldsymbol{x,y_{obs},y_{mis}}) &= \prod^{n}_{i=1} \bigg([p_i(\beta_0,\beta_1)]^{y_i}[1-p(\beta_0,\beta_1)]^{1-y_i}\bigg)\\
-    \implies L(\beta_0,\beta_1;\boldsymbol{x,y_{obs},y_{mis}}) &= \prod^{n}_{i=1}\bigg( \frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}} \bigg)^{y_i} \bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg)^{1-y_i} \\
-    \implies \log L(\beta_0,\beta_1;\boldsymbol{x,y_{obs},y_{mis}}) &= \sum^{n}_{i=1} \bigg(y_i\log\bigg(\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg)+(1-y_i)\log\bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg) \bigg)\\
-    \implies \log L(\beta_0,\beta_1;\boldsymbol{x,y_{obs},y_{mis}}) &=
+    L(\beta_0, \beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &= \prod^{n}_{i=1} \bigg([p_i(\beta_0,\beta_1)]^{y_i}[1-p(\beta_0,\beta_1)]^{1-y_i}\bigg)\\
+    \implies L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &= \prod^{n}_{i=1}\bigg( \frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}} \bigg)^{y_i} \bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg)^{1-y_i} \\
+    \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &= \sum^{n}_{i=1} \bigg(y_i\log\bigg(\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg)+(1-y_i)\log\bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg) \bigg)\\
+    \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &=
     \sum^{n}_{i=1}\bigg(y_i\log(e^{\beta_0+x_i\beta_1})-\log(1+e^{\beta_0+x_i\beta_1})-y_i\log(1+e^{\beta+x_i\beta_1})+y_i\log(1+e^{\beta+x_i\beta_1}) \bigg) \\
-    \implies \log L(\beta_0,\beta_1;\boldsymbol{x,y_{obs},y_{mis}}) &= \sum^{n}_{i=1} \bigg(y_i(\beta_0+x_i\beta_1)-\log(1+e^{\beta_0+x_i\beta_1}) \bigg) \\
-    &= l(\boldsymbol{\beta};\boldsymbol{x,y_{obs},y_{mis}})
+    \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &= \sum^{n}_{i=1} \bigg(y_i(\beta_0+x_i\beta_1)-\log(1+e^{\beta_0+x_i\beta_1}) \bigg) \\
+    &= l(\boldsymbol{\beta}|\boldsymbol{x,y_{obs},y_{mis}})
   \end{split}
 \end{equation}
-
-<!-- Then the score function is give by, -->
-<!-- \begin{equation} -->
-<!--   \begin{split} -->
-<!--     U(\beta_0)=\frac{d}{d\beta_0}l(\boldsymbol{\beta};\boldsymbol{x,y_{obs},y_{mis}}) = \sum^{n}_{i}\bigg(y_i-\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg) \\ -->
-<!--     U(\beta_1)=\frac{d}{d\beta_1}l(\boldsymbol{\beta};\boldsymbol{x,y_{obs},y_{mis}}) = -->
-<!--   \end{split} -->
-<!-- \end{equation} -->
 
 Now we proceed to implement the EM algorithm by calculating $Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}})$
 \begin{equation}
   \begin{split}
     Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}})&=\mathbb{E}_{\boldsymbol{y_{mis}}}
-    [l(\boldsymbol{\beta};\boldsymbol{x, y_{obs}, y_{mis}})|\boldsymbol{y_{obs}, x, \beta^{(t)}}] \\
+    [l(\boldsymbol{\beta}|\boldsymbol{x, y_{obs}, y_{mis}})|\boldsymbol{y_{obs}, x, \beta^{(t)}}] \\
     &=\sum^{m}_{i=1}\bigg(y_i(\beta_0 + x_i\beta_i)\bigg)-\sum^{n}_{i=1}\bigg(\log(1 + e^{\beta_0 + x_i\beta_1})\bigg) + \sum^{n}_{i=m+1}\bigg( (\beta_0+x_i\beta_1) \mathbb{E}_{\boldsymbol{y_{mis}}}[y_i|\boldsymbol{x, y_{obs}, \beta^{(t)}}] \bigg) \\
     &=\sum^{m}_{i=1}\bigg(y_i(\beta_0+x_i\beta_i)\bigg)-\sum^{n}_{i=1}\bigg(\log(1 + e^{\beta_0 + x_i\beta_1})\bigg) + \sum^{n}_{i=m+1}\bigg( (\beta_0 + x_i\beta_1)p_i(\boldsymbol{\beta}^{(t)}) \bigg) \\
     &(\mathbb{E}(Y_i)=p_i(\boldsymbol{\beta}) \text{ as } Y_i\sim\text{Bernoulli}(p_i(\boldsymbol{\beta})))
@@ -334,8 +328,7 @@ Now we differentiate $Q$ with respect to $\beta_0$ and $\beta_1$ for the M-Step
   \end{split}
 \end{equation}
 
-The solutions of the derivatives have no closed form expression and thus we need to resort to numerical methods. 
-Before we proceed to the code, we first need to preprocess `dataex4` due to the NA values by arranging it.
+However, the solutions of the derivatives have no closed form expressions and thus we need to resort to numerical methods. Before proceeding to the implementation, we first need to preprocess `dataex4` due to the `NA` values by rearranging it.
 ```{r}
 #rearranging the order where the NA values go the last
 dataex4 <- dataex4[order(dataex4$Y),]
@@ -356,6 +349,7 @@ qfn <- function(param, data){
   express.na <- beta[1] + x[406:500]*beta[2]
   express.all <- beta0 + x*beta1
   express.fix <- beta0 + x[406:500]*beta1
+  #expression of the Q function
   sum(y[1:405]*express) - sum(log(1 + exp(express.all))) +
     sum(express.fix*exp(express.na)/(1 + exp(express.na)))
 }
@@ -383,7 +377,7 @@ while(diff > 0.000001){
 cat("The value for beta0:", beta[1], "\n",
     "The value for beta1:", beta[2])
 ```
-
+Using two different methods, `maxLik()` and `optim()`, we can see that we both obtained similar results with a small($0.001$) difference. Thus, we conclude that the MLE of $\beta=(\beta_0,\beta_1)$ is $(0.976, -2.48)$
 
 \newpage
 
