@@ -372,7 +372,7 @@ head(dataex4)</code></pre>
 <pre class="r"><code>cat(&quot;Number of missing values in Y:&quot;, sum(is.na(dataex4)))</code></pre>
 <pre><code>## Number of missing values in Y: 95</code></pre>
 <p>Scrutinising on the dataset, we can observe that the missing value only occurs in <span class="math inline">\(Y\)</span> and there are <span class="math inline">\(95\)</span> missing values occurring in a univariate pattern</p>
-<p>We first derive the likelihood function to implement the EM algorithm given that <span class="math inline">\(y_{obs}=y_1,\dots,y_m\)</span> and <span class="math inline">\(y_{mis}=y_{m+1},\dots,y_{n}\)</span>.</p>
+<p>We first derive the likelihood function to implement the EM algorithm given that <span class="math inline">\(\boldsymbol{y_{obs}}=y_1,\dots,y_m\)</span> and <span class="math inline">\(\boldsymbol{y_{mis}}=y_{m+1},\dots,y_{n}\)</span>.</p>
 <p><span class="math display">\[\begin{equation}
   \begin{split}
     L(\beta_0, \beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &amp;= \prod^{n}_{i=1} \bigg([p_i(\beta_0,\beta_1)]^{y_i}[1-p(\beta_0,\beta_1)]^{1-y_i}\bigg)\\
@@ -417,7 +417,7 @@ head(dataex4,5)</code></pre>
 ## 498 0.7551561 NA
 ## 499 0.8782734 NA
 ## 500 0.6924915 NA</code></pre>
-<p>We can confirm that the order of <code>dataex4</code> is changed where the <code>NA</code> values are at the last. Now we proceed to the implementation of the EM algorithm. In the code, we have used for the stopping criterion as below <!-- $$|p^{(t+1)}-p^{(t)}|+--><span class="math display">\[|\beta_0^{(t+1)}-\beta_0^{(t)}|+|\beta_1^{(t+1)}-\beta_1^{(t)}|&lt;\varepsilon\]</span></p>
+<p>We can confirm that the order of <code>dataex4</code> is changed where the <code>NA</code> values are at the last. Now we proceed to the implementation of the EM algorithm. In the code, we have used for the stopping criterion as below <span class="math display">\[|\beta_0^{(t+1)}-\beta_0^{(t)}|+|\beta_1^{(t+1)}-\beta_1^{(t)}|&lt;\varepsilon\]</span></p>
 <pre class="r"><code>#function to compute the Q function
 qfn &lt;- function(param, data){
   beta0 &lt;- param[1]; beta1 &lt;- param[2]
@@ -456,7 +456,7 @@ cat(&quot;The value for beta0:&quot;, beta[1], &quot;\n&quot;,
     &quot;The value for beta1:&quot;, beta[2])</code></pre>
 <pre><code>## The value for beta0: 0.9757079 
 ##  The value for beta1: -2.479987</code></pre>
-<p>Using two different methods, <code>maxLik()</code> and <code>optim()</code>, we can see that we both obtained similar results with a small(<span class="math inline">\(0.001\)</span>) difference. Thus, we conclude that the MLE of <span class="math inline">\(\beta=(\beta_0,\beta_1)\)</span> is <span class="math inline">\((0.976, -2.48)\)</span></p>
+<p>Using two different methods, <code>maxLik()</code> and <code>optim()</code>, with <span class="math inline">\(\varepsilon=1e-6\)</span> we can see that we both obtained similar results with a small(<span class="math inline">\(0.001\)</span>) difference. Thus, we conclude that the MLE of <span class="math inline">\(\beta=(\beta_0,\beta_1)\)</span> is <span class="math inline">\((0.976, -2.48)\)</span></p>
 <div style="page-break-after: always;"></div>
 </div>
 <div id="q5" class="section level2">

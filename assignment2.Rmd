@@ -3,8 +3,8 @@ title: "IDA Assignment 2"
 author: "Johnny Lee, s1687781"
 date: "25th March 2022"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -295,7 +295,7 @@ cat("Number of missing values in Y:", sum(is.na(dataex4)))
 ```
 Scrutinising on the dataset, we can observe that the missing value only occurs in $Y$ and there are $95$ missing values occurring in a univariate pattern
 
-We first derive the likelihood function to implement the EM algorithm given that $y_{obs}=y_1,\dots,y_m$ and $y_{mis}=y_{m+1},\dots,y_{n}$.
+We first derive the likelihood function to implement the EM algorithm given that $\boldsymbol{y_{obs}}=y_1,\dots,y_m$ and $\boldsymbol{y_{mis}}=y_{m+1},\dots,y_{n}$.
 
 \begin{equation}
   \begin{split}
@@ -339,7 +339,7 @@ tail(dataex4,5)
 
 We can confirm that the order of `dataex4` is changed where the `NA` values are at the last.
 Now we proceed to the implementation of the EM algorithm. In the code, we have used for the stopping criterion as below
-<!-- $$|p^{(t+1)}-p^{(t)}|+-->$$|\beta_0^{(t+1)}-\beta_0^{(t)}|+|\beta_1^{(t+1)}-\beta_1^{(t)}|<\varepsilon$$ 
+$$|\beta_0^{(t+1)}-\beta_0^{(t)}|+|\beta_1^{(t+1)}-\beta_1^{(t)}|<\varepsilon$$ 
 ```{r warning=FALSE}
 #function to compute the Q function
 qfn <- function(param, data){
@@ -377,7 +377,7 @@ while(diff > 0.000001){
 cat("The value for beta0:", beta[1], "\n",
     "The value for beta1:", beta[2])
 ```
-Using two different methods, `maxLik()` and `optim()`, we can see that we both obtained similar results with a small($0.001$) difference. Thus, we conclude that the MLE of $\beta=(\beta_0,\beta_1)$ is $(0.976, -2.48)$
+Using two different methods, `maxLik()` and `optim()`, with $\varepsilon=1e-6$ we can see that we both obtained similar results with a small($0.001$) difference. Thus, we conclude that the MLE of $\beta=(\beta_0,\beta_1)$ is $(0.976, -2.48)$
 
 \newpage
 
