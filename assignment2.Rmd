@@ -301,11 +301,10 @@ We first derive the likelihood function to implement the EM algorithm given that
 \begin{equation}
   \begin{split}
     L(\beta_0, \beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &= \prod^{n}_{i=1} \bigg([p_i(\beta_0,\beta_1)]^{y_i}[1-p(\beta_0,\beta_1)]^{1-y_i}\bigg)\\
-    \implies L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &= \prod^{n}_{i=1}\bigg( \frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}} \bigg)^{y_i} \bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg)^{1-y_i} \\
+    &= \prod^{n}_{i=1}\bigg( \frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}} \bigg)^{y_i} \bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg)^{1-y_i} \\
     \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &= \sum^{n}_{i=1} \bigg(y_i\log\bigg(\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg)+(1-y_i)\log\bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg) \bigg)\\
-    \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &=
-    \sum^{n}_{i=1}\bigg(y_i\log(e^{\beta_0+x_i\beta_1})-\log(1+e^{\beta_0+x_i\beta_1})-y_i\log(1+e^{\beta+x_i\beta_1})+y_i\log(1+e^{\beta+x_i\beta_1}) \bigg) \\
-    \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &= \sum^{n}_{i=1} \bigg(y_i(\beta_0+x_i\beta_1)-\log(1+e^{\beta_0+x_i\beta_1}) \bigg) \\
+    &= \sum^{n}_{i=1}\bigg(y_i\log(e^{\beta_0+x_i\beta_1})-\log(1+e^{\beta_0+x_i\beta_1})-y_i\log(1+e^{\beta+x_i\beta_1})+y_i\log(1+e^{\beta+x_i\beta_1}) \bigg) \\
+    &= \sum^{n}_{i=1} \bigg(y_i(\beta_0+x_i\beta_1)-\log(1+e^{\beta_0+x_i\beta_1}) \bigg) \\
     &= l(\boldsymbol{\beta}|\boldsymbol{x,y_{obs},y_{mis}})
   \end{split}
 \end{equation}
@@ -378,7 +377,7 @@ while(diff > 0.000001){
 cat("The value for beta0:", beta[1], "\n",
     "The value for beta1:", beta[2])
 ```
-Using two different methods, `maxLik()` and `optim()`, with $\varepsilon=1e-6$ we can see that we both obtained similar results with a small($0.001$) difference. Thus, we conclude that the MLE of $\beta=(\beta_0,\beta_1)$ is $(0.976, -2.48)$
+Using two different methods, `maxLik()` and `optim()` with $\varepsilon=1e-6$, we can see that we both obtained similar results by a small difference ($0.001$). Thus, we conclude that the MLE of $\hat{\beta}_{\text{MLE}}=(\hat{\beta_0}_{\text{MLE}},\hat{\beta_1}_{\text{MLE}})$ is $(0.976, -2.48)$ respectively.
 
 \newpage
 
