@@ -3,8 +3,8 @@ title: "IDA Assignment 2"
 author: "Johnny Lee, s1687781"
 date: "25th March 2022"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -518,3 +518,4 @@ hist(dataex5, breaks=45, main = "Mixture Model of Log-Normal & exp",
 curve(p*dlnorm(x, mu, sigma)+(1-p)*dexp(x, lambda), add = TRUE, lwd = 2, col = "red")
 ```
 
+Using the **R** code provided, we obtained $\hat{p}=0.480,\quad\hat{\mu}=2.01\quad\hat{\sigma}^2=0.929\quad\hat{\lambda}=1.03$. The plot of the observed counts against the expected counts under this mixture model is shown above.
