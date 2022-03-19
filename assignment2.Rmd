@@ -3,8 +3,8 @@ title: "IDA Assignment 2"
 author: "Johnny Lee, s1687781"
 date: "25th March 2022"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -268,7 +268,7 @@ scalar $\psi$ distinct from $\theta$.
 
 ### **Answer** :
 
-The missing mechanism here is dependent on both $\mu_1$ and $Y_1$ thus **MAR**. We can observe similarity to (a). Distinctness of the parameters means that the parameter space of $(\theta, \psi)$ is equal to the Cartesian product of their individual product spaces. However, the $\mu_1$ also exists in the parameter space. This violates the ignorability assumption. Hence, (c) is not ignorable for likelihood-based estimation.
+The missing mechanism here is dependent on both $\mu_1$ and $Y_1$ thus **MAR**. We can observe similarity to (a). Distinctness of the parameters means that the parameter space of $\{\theta, \psi\}$ is equal to the Cartesian product of their individual product spaces. However, the $\mu_1$ also exists in the parameter space. This violates the ignorability assumption. Hence, (c) is not ignorable for likelihood-based estimation.
 
 \newpage
 
@@ -323,8 +323,10 @@ Now we proceed to implement the EM algorithm by calculating $Q(\boldsymbol{\beta
 Now we differentiate $Q$ with respect to $\beta_0$ and $\beta_1$ for the M-Step
 \begin{equation}
   \begin{split}
-    \frac{d}{d\beta_0}Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}}) &=\sum^{m}_{i=1}\bigg(y_i-\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg) + \sum^{n}_{i=m+1}\bigg(\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}+x_i\beta_1\frac{e^{\beta_0+x_i\beta_1}}{(1+e^{\beta_0+x_i\beta_1})^2}+\beta_0\frac{e^{\beta_0+x_i\beta_1}}{(1+e^{\beta_0+x_i\beta_1})^2} \bigg)\\
-    \frac{d}{d\beta_1}Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}}) &=\sum^{m}_{i=1}\bigg(y_ix_i-x_i\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg) + \sum^{n}_{i=m+1}\bigg(\beta_0\frac{x_ie^{\beta_0+x_i\beta_1}}{(1+e^{\beta_0+x_i\beta_1})^2}+x_i\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}+x_i\beta_1\frac{x_ie^{\beta_0+x_i\beta_1}}{(1+e^{\beta_0+x_i\beta_1})^2} \bigg)\\
+    \frac{d}{d\beta_0}Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}}) &=\sum^{m}_{i=1}y_i - \sum^{n}_{i=1}\bigg(\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg)\\
+    &+\sum^{n}_{i=m+1}\bigg(\frac{e^{\beta_0^{(t)}+x_i\beta_1^{(t)}}}{1+e^{\beta_0^{(t)}+x_i\beta_1^{(t)}}}+x_i\beta_1\frac{e^{\beta_0^{(t)}+x_i\beta_1^{(t)}}}{(1+e^{\beta_0^{(t)}+x_i\beta_1^{(t)}})^2}+\beta_0\frac{e^{\beta_0^{(t)}+x_i\beta_1^{(t)}}}{(1+e^{\beta_0^{(t)}+x_i\beta_1^{(t)}})^2} \bigg)\\
+    \frac{d}{d\beta_1}Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}}) &=\sum^{m}_{i=1}y_ix_i - \sum^{n}_{i=1}\bigg(x_i\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg)\\ 
+    &+ \sum^{n}_{i=m+1}\bigg(\beta_0\frac{x_ie^{\beta_0^{(t)}+x_i\beta_1^{(t)}}}{(1+e^{\beta_0^{(t)}+x_i\beta_1^{(t)}})^2}+x_i\frac{e^{\beta_0^{(t)}+x_i\beta_1^{(t)}}}{1+e^{\beta_0^{(t)}+x_i\beta_1^{(t)}}}+x_i\beta_1\frac{x_ie^{\beta_0^{(t)}+x_i\beta_1^{(t)}}}{(1+e^{\beta_0^{(t)}+x_i\beta_1^{(t)}})^2} \bigg)\\
   \end{split}
 \end{equation}
 

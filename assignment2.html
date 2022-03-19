@@ -349,7 +349,7 @@ summary(mle)</code></pre>
 </div>
 <div id="answer-7" class="section level3">
 <h3><strong>Answer</strong> :</h3>
-<p>The missing mechanism here is dependent on both <span class="math inline">\(\mu_1\)</span> and <span class="math inline">\(Y_1\)</span> thus <strong>MAR</strong>. We can observe similarity to (a). Distinctness of the parameters means that the parameter space of <span class="math inline">\((\theta, \psi)\)</span> is equal to the Cartesian product of their individual product spaces. However, the <span class="math inline">\(\mu_1\)</span> also exists in the parameter space. This violates the ignorability assumption. Hence, (c) is not ignorable for likelihood-based estimation.</p>
+<p>The missing mechanism here is dependent on both <span class="math inline">\(\mu_1\)</span> and <span class="math inline">\(Y_1\)</span> thus <strong>MAR</strong>. We can observe similarity to (a). Distinctness of the parameters means that the parameter space of <span class="math inline">\(\{\theta, \psi\}\)</span> is equal to the Cartesian product of their individual product spaces. However, the <span class="math inline">\(\mu_1\)</span> also exists in the parameter space. This violates the ignorability assumption. Hence, (c) is not ignorable for likelihood-based estimation.</p>
 <div style="page-break-after: always;"></div>
 </div>
 </div>
@@ -375,11 +375,10 @@ summary(mle)</code></pre>
 <p><span class="math display">\[\begin{equation}
   \begin{split}
     L(\beta_0, \beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &amp;= \prod^{n}_{i=1} \bigg([p_i(\beta_0,\beta_1)]^{y_i}[1-p(\beta_0,\beta_1)]^{1-y_i}\bigg)\\
-    \implies L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &amp;= \prod^{n}_{i=1}\bigg( \frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}} \bigg)^{y_i} \bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg)^{1-y_i} \\
+    &amp;= \prod^{n}_{i=1}\bigg( \frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}} \bigg)^{y_i} \bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg)^{1-y_i} \\
     \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &amp;= \sum^{n}_{i=1} \bigg(y_i\log\bigg(\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg)+(1-y_i)\log\bigg(\frac{1}{1+e^{\beta_0+x_i\beta_1}}\bigg) \bigg)\\
-    \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &amp;=
-    \sum^{n}_{i=1}\bigg(y_i\log(e^{\beta_0+x_i\beta_1})-\log(1+e^{\beta_0+x_i\beta_1})-y_i\log(1+e^{\beta+x_i\beta_1})+y_i\log(1+e^{\beta+x_i\beta_1}) \bigg) \\
-    \implies \log L(\beta_0,\beta_1|\boldsymbol{x,y_{obs},y_{mis}}) &amp;= \sum^{n}_{i=1} \bigg(y_i(\beta_0+x_i\beta_1)-\log(1+e^{\beta_0+x_i\beta_1}) \bigg) \\
+    &amp;= \sum^{n}_{i=1}\bigg(y_i\log(e^{\beta_0+x_i\beta_1})-\log(1+e^{\beta_0+x_i\beta_1})-y_i\log(1+e^{\beta+x_i\beta_1})+y_i\log(1+e^{\beta+x_i\beta_1}) \bigg) \\
+    &amp;= \sum^{n}_{i=1} \bigg(y_i(\beta_0+x_i\beta_1)-\log(1+e^{\beta_0+x_i\beta_1}) \bigg) \\
     &amp;= l(\boldsymbol{\beta}|\boldsymbol{x,y_{obs},y_{mis}})
   \end{split}
 \end{equation}\]</span></p>
@@ -394,8 +393,10 @@ summary(mle)</code></pre>
 \end{equation}\]</span></p>
 <p>Now we differentiate <span class="math inline">\(Q\)</span> with respect to <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> for the M-Step <span class="math display">\[\begin{equation}
   \begin{split}
-    \frac{d}{d\beta_0}Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}}) &amp;=\sum^{m}_{i=1}\bigg(y_i-\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg) + \sum^{n}_{i=m+1}\bigg(\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}+x_i\beta_1\frac{e^{\beta_0+x_i\beta_1}}{(1+e^{\beta_0+x_i\beta_1})^2}+\beta_0\frac{e^{\beta_0+x_i\beta_1}}{(1+e^{\beta_0+x_i\beta_1})^2} \bigg)\\
-    \frac{d}{d\beta_1}Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}}) &amp;=\sum^{m}_{i=1}\bigg(y_ix_i-x_i\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg) + \sum^{n}_{i=m+1}\bigg(\beta_0\frac{x_ie^{\beta_0+x_i\beta_1}}{(1+e^{\beta_0+x_i\beta_1})^2}+x_i\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}+x_i\beta_1\frac{x_ie^{\beta_0+x_i\beta_1}}{(1+e^{\beta_0+x_i\beta_1})^2} \bigg)\\
+    \frac{d}{d\beta_0}Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}}) &amp;=\sum^{m}_{i=1}y_i - \sum^{n}_{i=1}\bigg(\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg)\\
+    &amp;+\sum^{n}_{i=m+1}\bigg(\frac{e^{\beta_0^{(t)}+x_i\beta_1^{(t)}}}{1+e^{\beta_0^{(t)}+x_i\beta_1^{(t)}}}+x_i\beta_1\frac{e^{\beta_0^{(t)}+x_i\beta_1^{(t)}}}{(1+e^{\beta_0^{(t)}+x_i\beta_1^{(t)}})^2}+\beta_0\frac{e^{\beta_0^{(t)}+x_i\beta_1^{(t)}}}{(1+e^{\beta_0^{(t)}+x_i\beta_1^{(t)}})^2} \bigg)\\
+    \frac{d}{d\beta_1}Q(\boldsymbol{\beta}|\boldsymbol{\beta^{(t)}}) &amp;=\sum^{m}_{i=1}y_ix_i - \sum^{n}_{i=1}\bigg(x_i\frac{e^{\beta_0+x_i\beta_1}}{1+e^{\beta_0+x_i\beta_1}}\bigg)\\ 
+    &amp;+ \sum^{n}_{i=m+1}\bigg(\beta_0\frac{x_ie^{\beta_0^{(t)}+x_i\beta_1^{(t)}}}{(1+e^{\beta_0^{(t)}+x_i\beta_1^{(t)}})^2}+x_i\frac{e^{\beta_0^{(t)}+x_i\beta_1^{(t)}}}{1+e^{\beta_0^{(t)}+x_i\beta_1^{(t)}}}+x_i\beta_1\frac{x_ie^{\beta_0^{(t)}+x_i\beta_1^{(t)}}}{(1+e^{\beta_0^{(t)}+x_i\beta_1^{(t)}})^2} \bigg)\\
   \end{split}
 \end{equation}\]</span></p>
 <p>However, the solutions of the derivatives have no closed form expressions and thus we need to resort to numerical methods. Before proceeding to the implementation, we first need to preprocess <code>dataex4</code> due to the <code>NA</code> values by rearranging it.</p>
@@ -455,7 +456,7 @@ cat(&quot;The value for beta0:&quot;, beta[1], &quot;\n&quot;,
     &quot;The value for beta1:&quot;, beta[2])</code></pre>
 <pre><code>## The value for beta0: 0.9757079 
 ##  The value for beta1: -2.479987</code></pre>
-<p>Using two different methods, <code>maxLik()</code> and <code>optim()</code>, with <span class="math inline">\(\varepsilon=1e-6\)</span> we can see that we both obtained similar results with a small(<span class="math inline">\(0.001\)</span>) difference. Thus, we conclude that the MLE of <span class="math inline">\(\beta=(\beta_0,\beta_1)\)</span> is <span class="math inline">\((0.976, -2.48)\)</span></p>
+<p>Using two different methods, <code>maxLik()</code> and <code>optim()</code> with <span class="math inline">\(\varepsilon=1e-6\)</span>, we can see that we both obtained similar results by a small difference (<span class="math inline">\(0.001\)</span>). Thus, we conclude that the MLE of <span class="math inline">\(\hat{\beta}_{\text{MLE}}=(\hat{\beta_0}_{\text{MLE}},\hat{\beta_1}_{\text{MLE}})\)</span> is <span class="math inline">\((0.976, -2.48)\)</span> respectively.</p>
 <div style="page-break-after: always;"></div>
 </div>
 <div id="q5" class="section level2">
