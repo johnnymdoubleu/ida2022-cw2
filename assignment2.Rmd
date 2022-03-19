@@ -3,8 +3,8 @@ title: "IDA Assignment 2"
 author: "Johnny Lee, s1687781"
 date: "25th March 2022"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -383,7 +383,7 @@ Using two different methods, `maxLik()` and `optim()` with $\varepsilon=1e-6$, w
 
 \newpage
 
-## Q5
+# Q5
 
 Consider a random sample $Y_1,...,Y_n$ from the mixture distribution
 with density
@@ -501,9 +501,9 @@ mixture.model <- function(y, theta, eps){
   }
   return(theta)
 }
-#Performing the EM algorithm on Mixture Model
+#Performing the EM algorithm on Mixture Modelz
 res <- mixture.model(y = dataex5, c(0.1, 1, 0.5, 2), 0.000001)
-p <- res[1]; mu <- res[2]; sigma <- res[3]; lambda <- res[4]
+p <- res[1]; mu <- res[2]; sigma <- res[3]^2; lambda <- res[4]
 cat("The value for p is", p)
 cat("The value for mu is", mu)
 cat("The value for sigma^2 is", sigma)
@@ -511,11 +511,40 @@ cat("The value for lambda is", lambda)
 ```
 
 ```{r}
+B <- 500
+pb <- mub <- sigmab <- lambdab <- numeric(B)
+set.seed(1)
+for(l in 1:B){
+yb <- sample(dataex5, size = length(dataex5), replace = TRUE)
+fitb <- mixture.model(y = yb, theta = c(p, mu, sigma, lambda),
+eps = 0.000001)
+pb[l] <- fitb[1]
+mub[l] <- fitb[2]
+sigmab[l] <- fitb[3]
+lambdab[l] <- fitb[4]
+}
+
+ql <- function(x){quantile(x,0.025)}
+qh <- function(x){quantile(x,0.975)}
+pl <- ql(pb); ph <- qh(pb)
+mul <- ql(mub); muh <- qh(mub)
+sigmal <- ql(sigmab); sigmah <- qh(sigmab)
+lambdal <- ql(lambdab); lambdah <- qh(lambdab)
+df <- data.frame("Estimate" = c(p,mu, sigma, lambda),
+"lq" = c(pl, mul, sigmal, lambdal),
+"uq" = c(ph, muh, sigmah, lambdah))
+rownames(df) <- c("$p$", "$\\mu$","$\\sigma^2$", "$\\lambda$")
+colnames(df) <- c("Estimate", "2.5% quantile", "97.5% quantile")
+knitr::kable(df, escape = FALSE, digits = 4)
+```
+
+Using the **R** code provided, we obtained $\hat{p}=0.480,\quad\hat{\mu}=2.01,\quad\hat{\sigma}^2=0.864,\quad\hat{\lambda}=1.03$. Also, we further performed the nonparametric bootstrap to quantify uncertainty about the parameters as shown on the table above. The plot of the observed counts against the expected counts under this mixture model is shown below. We can see that the generated mixture model represents the dataset well.
+```{r}
 #plotting the histogram of the mixture model
 hist(dataex5, breaks=45, main = "Mixture Model of Log-Normal & exp", 
      xlab = "y", ylab = "density", ylim = c(0,0.2),
-     cex.main = 1.5, cex.lab = 1.5, cex.axis = 1.4, freq = F)
+     cex.main = 1.5, cex.lab = 1.5, freq = F)
 curve(p*dlnorm(x, mu, sigma)+(1-p)*dexp(x, lambda), add = TRUE, lwd = 2, col = "red")
+legend("topright", c("Original", "Mixture Model"), col=c("gray", "red"),
+       bty="n",lty = c(NA, 1), pch = c(15, NA),lwd=c(100,3))
 ```
-
-Using the **R** code provided, we obtained $\hat{p}=0.480,\quad\hat{\mu}=2.01\quad\hat{\sigma}^2=0.929\quad\hat{\lambda}=1.03$. The plot of the observed counts against the expected counts under this mixture model is shown above.
