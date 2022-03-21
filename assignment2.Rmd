@@ -187,7 +187,7 @@ $\sigma^2$.
 ### **Answer** :
 
 We first define the Survival function (from **Workshop 3**)as 
-$$S(D;\mu,\sigma^2)=\mathbb{P}(Y_i<D;\mu,\sigma^2)=\Phi(x_i;\mu,\sigma^2)$$
+$$\mathbb{P}(Y_i<D;\mu,\sigma^2)=\Phi(x_i;\mu,\sigma^2)$$
 which also represents the censored observations. For the uncensored observation, we have
 $$\phi(x_i;\mu,\sigma^2)$$
 
