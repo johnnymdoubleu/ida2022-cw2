@@ -3,8 +3,8 @@ title: "IDA Assignment 2"
 author: "Johnny Lee, s1687781"
 date: "25th March 2022"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -186,9 +186,9 @@ $\sigma^2$.
 
 ### **Answer** :
 
-We first define the Survival function (from **Workshop 3**)as 
-$$\mathbb{P}(Y_i<D;\mu,\sigma^2)=\Phi(x_i;\mu,\sigma^2)$$
-which also represents the censored observations. For the uncensored observation, we have
+We first define the case for censored observations (from **Workshop 3**)as 
+$$\mathbb{P}(Y_i<D;\mu,\sigma^2)=F(D;\mu,\sigma^2)=\Phi(x_i;\mu,\sigma^2)$$
+For the uncensored observation, it is the density function and we have 
 $$\phi(x_i;\mu,\sigma^2)$$
 
 Given that $X_1,\dots,X_n$ are independent and identically distributed,
